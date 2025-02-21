@@ -7,5 +7,6 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "types": ["./types"],
+    "esModuleInterop": true,
   }
 }

@@ -1,0 +1,40 @@
+import { Link } from "react-router-dom";
+import Logo from '../assets/logo.png'
+
+// Fazer upload dos receptores
+function handleReceptorUpload() {
+    window.electron.openDialog('showOpenDialog', 'receptor', {
+        title: 'Select receptor files',
+        buttonLabel: 'Select',
+        properties: ['openFile', 'multiSelections'],
+        filters: [{ name: '.pdb', extensions: ['pdb'] }]
+    });
+}
+
+// Fazer upload dos ligantes
+function handleLigandUpload() {
+    window.electron.openDialog('showOpenDialog', 'ligand', {
+        title: 'Select ligand files',
+        buttonLabel: 'Select',
+        properties: ['openFile', 'multiSelections'],
+        filters: [{ name: '.pdb', extensions: ['sdf', 'mol2', 'pdb'] }]
+    });
+}
+
+function Navbar() {
+    return (
+    <div className='p-2 d-flex align-items-center bg-dark'>
+        <Link to="/" style={{width:'20%'}} className="ms-2 me-2">
+                <img src={Logo} alt="logo docking" style={{width:'100%'}}/>
+        </Link>
+        <div className='m-2 btn-group'>
+            <button className="btn btn-outline-light" onClick={handleReceptorUpload}>Upload Receptor</button>
+            <button className="btn btn-outline-light" onClick={handleLigandUpload} >Upload Ligand</button>
+        </div>
+        <Link to="/docking" className='btn btn-warning text-black'>Start Docking</Link>
+        <button className="btn ms-auto fs-4 text-light" style={{marginRight:'30px'}}><i className="bi bi-gear-fill" ></i></button>
+    </div>
+    );
+}
+
+export default Navbar;
