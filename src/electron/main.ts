@@ -3,6 +3,7 @@ import path from "path";
 import fs from "fs";
 import { isDev } from "./util.js";
 import { getPreloadPath } from "./pathResolver.js";
+import { resourceLimits } from "worker_threads";
 
 // Diretório atual
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
@@ -24,49 +25,73 @@ app.on("ready", () => {
 
 // Upload de arquivos
 ipcMain.handle('open-dialog', async (event, { method, format, config }) => {
-    if (method === 'showOpenDialog') {
-        const result = await dialog.showOpenDialog(config);
-        if (!result.canceled && result.filePaths.length > 0) {
-            const molObjects = result.filePaths.map(filePath => {
-                try {
-                    const data = fs.readFileSync(filePath, 'utf8');
-                    const fileName = path.basename(filePath);              
-                    const fileFormat = path.extname(filePath).substring(1); // Determina o formato do arquivo com base na extensão do arquivo
-                    let destinationDir;
-                    if (format === 'receptor') {
-                        destinationDir = path.join(__dirname, '../temp/receptors');
-                    } else if (format === 'ligand') {
-                        destinationDir = path.join(__dirname, '../temp/ligands');
-                    } else {
-                        throw new Error(`Invalid format: ${format}`);
-                    }
+    if (method === 'upload')
+    {
+        const files = await dialog.showOpenDialog(config);
 
-                    const destinationPath = path.join(destinationDir, fileName);
+        if (files.canceled && files.filePaths.length === 0) return null;
+        const dataFiles = files.filePaths.map((filePath) => {
+            try
+            {
+                const file = files.filePaths[0];
+                const data = fs.readFileSync(file, 'utf8');
+                const fileName = path.basename(file);
 
-                    // Cria o diretório de destino, se não existir
-                    fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
+            let destinationDir;
+            if (format === 'receptor') {
+                destinationDir = path.join(__dirname, '../temp/receptors');
+            } else if (format === 'ligand') {
+                destinationDir = path.join(__dirname, '../temp/ligands');
+            } else {
+                throw new Error(`Invalid format: ${format}`);
+            }
 
-                    // Copia o arquivo para o diretório destino
-                    fs.copyFileSync(filePath, destinationPath);
+            const destinationPath = path.join(destinationDir, fileName);
+            fs.mkdirSync(path.dirname(destinationPath), { recursive: true });
+            fs.copyFileSync(filePath, destinationPath);
 
-                    return {
-                        name: fileName,
-                        data: data,
-                        format: fileFormat,
-                        filePath: destinationPath // Adiciona o caminho do arquivo copiado ao objeto
-                    };
-                } catch (error) {
-                    console.error('Erro ao ler ou copiar o arquivo:', error);
-                    throw error;
-                }
-            });
+                return {
+                    name: fileName,
+                    data: data,
+                    format: format,
+                    filePath: destinationPath,
+                };
+            } catch (error)
+            {
+                console.error(error);
+                return null;
+            }
+        });
+        return dataFiles;
+    } else
+    {
+        return null;
+        console.log('Método não suportado');
+    }
+});
 
-            return molObjects; // Retorna uma lista de objetos com informações sobre os arquivos
-        } else {
-            // Retornar um valor indicando que nenhum arquivo foi selecionado
-            return null;
-        }
+//Listar arquivos da pasta temp
+ipcMain.handle('listFiles', async (event) => {
+    const receptorDir = path.join(__dirname, '../temp/receptors');
+    const ligandDir = path.join(__dirname, '../temp/ligands');
+    const resultsDir = path.join(__dirname, '../temp/results');
+    let receptorFiles: string[] = [];
+    let ligandFiles: string[] = [];
+    let resultsFiles: string[] = [];
+
+    try
+    {
+        receptorFiles = fs.readdirSync(receptorDir);
+        ligandFiles = fs.readdirSync(ligandDir);
+        resultsFiles = fs.readdirSync(resultsDir);
+    } catch (error)
+    {
+        console.error(error);
     }
 
-    throw new Error(`Invalid dialog method: ${method}`);
+    return {
+        receptorFiles,
+        ligandFiles,
+        resultsFiles,
+    };
 });

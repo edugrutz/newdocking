@@ -2,18 +2,25 @@ import { Link } from "react-router-dom";
 import Logo from '../assets/logo.png'
 
 // Fazer upload dos receptores
-function handleReceptorUpload() {
-    window.electron.openDialog('showOpenDialog', 'receptor', {
+async function handleReceptorUpload() {
+    try
+    {
+    const rUpload = await window.electron.openDialog('upload', 'receptor', {
         title: 'Select receptor files',
         buttonLabel: 'Select',
         properties: ['openFile', 'multiSelections'],
         filters: [{ name: '.pdb', extensions: ['pdb'] }]
     });
+    console.log(rUpload);
+	} catch (error)
+    {
+        console.error(error);
+    }
 }
 
 // Fazer upload dos ligantes
 function handleLigandUpload() {
-    window.electron.openDialog('showOpenDialog', 'ligand', {
+    window.electron.openDialog('upload', 'ligand', {
         title: 'Select ligand files',
         buttonLabel: 'Select',
         properties: ['openFile', 'multiSelections'],
