@@ -1,6 +1,7 @@
 {
     "appId": "com.edugrutz.docking",
     "files": ["dist-electron", "dist-react"],
+    "extraResources": ["dist-electron/preload.cjs"],
     "icon": "./icon.png",
     "mac": {
         "target": "dmg"
