@@ -8,7 +8,6 @@ import List from './pages/List';
 import Viewer from './pages/Viewer';
 
 function App() {
-  const [count, setCount] = useState(0);
 
   return (
     <div className='bg-dark text-light vh-100 d-flex flex-column'>

@@ -3,35 +3,36 @@ import Logo from '../assets/logo.png'
 
 // Fazer upload dos receptores
 async function handleReceptorUpload() {
-    try
-    {
+    try {
     const rUpload = await window.electron.openDialog('upload', 'receptor', {
         title: 'Select receptor files',
         buttonLabel: 'Select',
         properties: ['openFile', 'multiSelections'],
         filters: [{ name: '.pdb', extensions: ['pdb'] }]
     });
-    console.log(rUpload);
-	} catch (error)
-    {
+	} catch (error) {
         console.error(error);
     }
 }
 
 // Fazer upload dos ligantes
-function handleLigandUpload() {
-    window.electron.openDialog('upload', 'ligand', {
+async function handleLigandUpload() {
+    try {
+    const lUpload = await window.electron.openDialog('upload', 'ligand', {
         title: 'Select ligand files',
         buttonLabel: 'Select',
         properties: ['openFile', 'multiSelections'],
         filters: [{ name: '.pdb', extensions: ['sdf', 'mol2', 'pdb'] }]
     });
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 function Navbar() {
     return (
     <div className='p-2 d-flex align-items-center bg-dark'>
-        <Link to="/" style={{width:'20%'}} className="ms-2 me-2">
+        <Link to="/" style={{width:'20%', minWidth:'100px', maxWidth:'200px'}} className="ms-2 me-2">
                 <img src={Logo} alt="logo docking" style={{width:'100%'}}/>
         </Link>
         <div className='m-2 btn-group'>

@@ -8,14 +8,10 @@ const Viewer = () => {
 
   useEffect(() => {
     if (viewerContainerRef.current) {
-      viewerRef.current = $3Dmol.createViewer(viewerContainerRef.current, { backgroundColor: 'white' });
-
-      // Carregar o modelo PDB
-      $3Dmol.download('pdb:1CRN', viewerRef.current, {}, () => {
-        viewerRef.current.setStyle({}, { cartoon: { color: 'spectrum' } });
-        viewerRef.current.zoomTo();
-        viewerRef.current.render();
-      });
+      viewerRef.current = $3Dmol.createViewer(viewerContainerRef.current, { backgroundColor: 'black' });
+      viewerRef.current.setStyle({}, { cartoon: { color: 'spectrum' } });
+      viewerRef.current.zoomTo();
+      viewerRef.current.render();
     }
   }, []);
 
@@ -27,7 +23,7 @@ const Viewer = () => {
           :
           <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {viewerRef.current.setBackgroundColor('black'); setDarkMode(true)}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle"></i></button>
         }
-        <div ref={viewerContainerRef} style={{ width: '100%', height: '400px', position: 'relative' }}></div>
+        <div ref={viewerContainerRef} style={{ width: '100%', height: '425px', position: 'relative' }}></div>
       </div>
     </div>
   );

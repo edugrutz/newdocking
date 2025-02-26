@@ -43,7 +43,6 @@ const List = () => {
                 <div className='border p-1' key={index}>{result}</div>
             )}
         )}
-        <Link to='/viewer'>Viewer</Link>
     </div>
   )
 }

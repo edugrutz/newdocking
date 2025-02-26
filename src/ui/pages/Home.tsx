@@ -1,11 +1,12 @@
 import React from 'react'
 import Logo from '../assets/logo.png'
+import Viewer from './Viewer'
 
 const Home = () => {
 
   return (
     <div>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut odio deserunt quisquam quasi eveniet, minima quaerat sequi, commodi odit ducimus, necessitatibus ipsa modi voluptate similique facilis officia reiciendis porro aperiam.
+      <Viewer />
     </div>
   )
 }
