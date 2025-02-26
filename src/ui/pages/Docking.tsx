@@ -1,8 +1,15 @@
 import React from 'react'
+import Receptor from './DockingFiles/Receptor'
+import Ligand from './DockingFiles/Ligand'
+import DockingOptions from './DockingFiles/DockingOptions'
 
 const Docking = () => {
   return (
-    <div>Docking</div>
+    <div>
+      <Receptor />
+      <Ligand />
+      <DockingOptions />
+    </div>
   )
 }
 

@@ -18,7 +18,7 @@ function App() {
           <aside className='sidebar'>
             <List />
           </aside>
-          <main className='content ms-2'>
+          <main className='content ms-2 w-100 me-3'>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/docking" element={<Docking />} />

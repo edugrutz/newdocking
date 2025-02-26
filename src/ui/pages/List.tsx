@@ -24,23 +24,23 @@ const List = () => {
     }
 
   return (
-    <div className='m-2 p-2 overflow-auto' style={{minWidth: '200px'}}>
+    <div className='m-2 p-2 overflow-auto' style={{minWidth: '250px'}}>
         <label className='fw-bold'>Receptors</label>
         {receptors.map((receptor, index) => {
             return (
-                <div key={index}>{receptor}</div>
+                <div className='border p-1' key={index}>{receptor}</div>
             )})
         } <br />
         <label className='fw-bold'>Ligands</label>
         {ligands.map((ligand, index) => {
             return (
-                <div key={index}>{ligand}</div>
+                <div className='border p-1' key={index}>{ligand}</div>
             )})
         } <br />
         <label className='fw-bold'>Results</label>
         {results.map((result, index) => {
             return (
-                <div key={index}>{result}</div>
+                <div className='border p-1' key={index}>{result}</div>
             )}
         )}
         <Link to='/viewer'>Viewer</Link>
