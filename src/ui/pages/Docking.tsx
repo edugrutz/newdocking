@@ -1,14 +1,18 @@
-import React from 'react'
+import {useState} from 'react'
 import Receptor from './DockingFiles/Receptor'
 import Ligand from './DockingFiles/Ligand'
 import DockingOptions from './DockingFiles/DockingOptions'
 
-const Docking = () => {
+const Docking = ({receptors, ligands}) => {
+
+  const [molName, setMolName] = useState('')
+  const [selectedReceptor, setSelectedReceptor] = useState('')
+
   return (
     <div>
-      <Receptor />
-      <Ligand />
-      <DockingOptions />
+      <Receptor receptors={receptors} setSelectedReceptor={setSelectedReceptor}/>
+      <Ligand ligands={ligands}/>
+      <DockingOptions molViewer={selectedReceptor} molName={molName}/>
     </div>
   )
 }

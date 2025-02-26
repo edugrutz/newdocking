@@ -78,12 +78,12 @@ function App() {
                 <Navbar handleLigandUpload={handleLigandUpload} handleReceptorUpload={handleReceptorUpload}/>
                 <div className='d-flex flex-grow-1'>
                     <aside className='sidebar'>
-                        <List receptors={receptorsData} ligands={ligandsData} results={results} setMolViewer={setMolViewer} setMolFormat={setMolFormat} getFiles={getFiles}/>
+                        <List receptors={receptorsData} ligands={ligandsData} results={results} setMolViewer={setMolViewer} setMolFormat={setMolFormat} getFiles={getFiles} setMolName={setMolName}/>
                     </aside>
                     <main className='content ms-2 w-100 me-3'>
                         <Routes>
-                            <Route path="/" element={<Viewer molViewer={molViewer} molFormat={molFormat}/>} />
-                            <Route path="/docking" element={<Docking />} />
+                            <Route path="/" element={<Viewer molViewer={molViewer} molFormat={molFormat} molName={molName}/>} />
+                            <Route path="/docking" element={<Docking receptors={receptorsData} ligands={ligandsData}/>} />
                         </Routes>
                     </main>
                 </div>

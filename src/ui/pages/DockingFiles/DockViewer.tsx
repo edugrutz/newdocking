@@ -1,36 +1,54 @@
 import { useRef, useEffect, useState } from 'react';
 import * as $3Dmol from '3dmol';
 
-const Viewer = ({molViewer, molFormat, molName}) => {
+const DockViewer = ({molViewer, molName}) => {
   const viewerContainerRef = useRef(null);
   const viewerRef = useRef(null);
   const [darkMode, setDarkMode] = useState(true);
 
+  const box = true;
+  const centerBox = [0, 0, 0];
+  const sizeBox = [20, 20, 20];
+
   useEffect(() => {
     if (viewerContainerRef.current) {
-      viewerRef.current = $3Dmol.createViewer(viewerContainerRef.current, { backgroundColor: 'black' });
-      viewerRef.current.addModel(molViewer, molFormat);
-      if (molFormat === 'pdb') {
+        if (!viewerRef.current) {
+            viewerRef.current = $3Dmol.createViewer(viewerContainerRef.current, { backgroundColor: 'black' });
+        }
+      if (molViewer)
+      {
+        viewerRef.current.clear();
+        viewerRef.current.addModel(molViewer, 'pdb');
         viewerRef.current.setStyle({}, { cartoon: { color: 'spectrum' } });
+        viewerRef.current.zoomTo();
+        viewerRef.current.render();
       }
-      viewerRef.current.zoomTo();
-      viewerRef.current.render();
+
+      if (box) {
+        const shape = viewerRef.current.addShape({ color: 'red' });
+        shape.addBox({
+          corner: { x: centerBox[0], y: centerBox[1], z: centerBox[2] },
+          dimensions: { w: sizeBox[0], h: sizeBox[1], d: sizeBox[2] }
+        });
+        shape.opacity = 0.7;
+        viewerRef.current.render();
+      }
     }
   }, [molViewer]);
 
   return (
     <div>
-      <h1>{molName}</h1>
+      <h4>{molName}</h4>
       <div className='position-relative'>
         {darkMode ?
           <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {viewerRef.current.setBackgroundColor('white'); setDarkMode(false)}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle-fill"></i></button>
           :
           <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {viewerRef.current.setBackgroundColor('black'); setDarkMode(true)}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle"></i></button>
         }
-        <div ref={viewerContainerRef} style={{ width: '100%', height: '425px', position: 'relative' }}></div>
+        <div ref={viewerContainerRef} style={{ width: '450px', height: '300px', position: 'relative' }}></div>
       </div>
     </div>
   );
 };
 
-export default Viewer;
+export default DockViewer;
