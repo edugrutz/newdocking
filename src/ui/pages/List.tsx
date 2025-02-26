@@ -1,50 +1,30 @@
-import {useState, useEffect} from 'react'
-import { Link } from 'react-router-dom'
+import React from 'react';
 
-const List = () => {
+const List = ({ receptors, ligands, results, setMolViewer, setMolFormat, getFiles}) => {
+    return (
+        <div className='m-2 p-2 overflow-auto text-center' style={{ minWidth: '260px' }}>
+            <label>Receptors</label>
+            {receptors.map((receptor, index) => (
+                <div className='border border-light p-1 d-flex align-items-center mt-1' key={index}>
+                    <label onClick={() => {setMolViewer(receptor.data); setMolFormat(receptor.format)}} className='p-1 text-truncate'  style={{cursor:'pointer'}}>{receptor.name}</label>
+                    <button onClick={() => {window.electron.dellFile(receptor.filePath); getFiles()}} className='btn btn-sm text-danger ms-auto' style={{height:'50%'}}><i className="bi bi-trash"></i></button>
+                </div>
+            ))} <br />
+            <label>Ligands</label>
+            {ligands.map((ligand, index) => (
+                <div className='border border-light p-1 d-flex align-items-center mt-1' key={index}>
+                    <label onClick={() => {setMolViewer(ligand.data); setMolFormat(ligand.format)}} className='p-1 text-truncate' style={{cursor:'pointer'}}>{ligand.name}</label>
+                    <button onClick={() => {window.electron.dellFile(ligand.filePath); getFiles()}} className='btn btn-sm text-danger ms-auto' style={{height:'50%'}}><i className="bi bi-trash"></i></button>
+                </div>
+            ))} <br />
+            <label>Results</label>
+            {results.map((result, index) => (
+                <div className='border border-light p-1 d-flex align-items-center mt-1' key={index}>
+                    <label onClick={() => { console.log(result.data) }}>{result.name}</label>
+                </div>
+            ))}
+        </div>
+    );
+};
 
-    const [ligands, setLigands] = useState([])
-    const [receptors, setReceptors] = useState([])
-    const [results, setResults] = useState([])
-
-    useEffect(() => {
-        getFiles()
-    }, [])
-
-    async function getFiles() {
-        try {
-            const get = await window.electron.listFiles().then((data) => {
-                setLigands(data.ligandFiles)
-                setReceptors(data.receptorFiles)
-                setResults(data.resultsFiles)
-            })
-        } catch (error) {
-            console.error(error)
-        }
-    }
-
-  return (
-    <div className='m-2 p-2 overflow-auto' style={{minWidth: '250px'}}>
-        <label className='fw-bold'>Receptors</label>
-        {receptors.map((receptor, index) => {
-            return (
-                <div className='border p-1' key={index}>{receptor}</div>
-            )})
-        } <br />
-        <label className='fw-bold'>Ligands</label>
-        {ligands.map((ligand, index) => {
-            return (
-                <div className='border p-1' key={index}>{ligand}</div>
-            )})
-        } <br />
-        <label className='fw-bold'>Results</label>
-        {results.map((result, index) => {
-            return (
-                <div className='border p-1' key={index}>{result}</div>
-            )}
-        )}
-    </div>
-  )
-}
-
-export default List
+export default List;

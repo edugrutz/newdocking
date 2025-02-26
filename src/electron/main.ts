@@ -95,3 +95,66 @@ ipcMain.handle('listFiles', async (event) => {
         resultsFiles,
     };
 });
+
+// Pegar arquivos e data
+ipcMain.handle('getFiles', async (event) => {
+    const receptorDir = path.join(__dirname, '../temp/receptors');
+    const ligandDir = path.join(__dirname, '../temp/ligands');
+    const resultsDir = path.join(__dirname, '../temp/results');
+    let receptorFiles: string[] = [];
+    let ligandFiles: string[] = [];
+    let resultsFiles: string[] = [];
+
+    try
+    {
+        receptorFiles = fs.readdirSync(receptorDir);
+        ligandFiles = fs.readdirSync(ligandDir);
+        resultsFiles = fs.readdirSync(resultsDir);
+    } catch (error)
+    {
+        console.error(error);
+    }
+
+    const receptorData = receptorFiles.map((file) => {
+        const data = fs.readFileSync(path.join(receptorDir, file), 'utf8');
+        const format = path.extname(file).substring(1);
+        const filePath = path.join(receptorDir, file);
+        return {
+            name: file,
+            data: data,
+            format: format,
+            filePath: filePath,
+        };
+    });
+
+    const ligandData = ligandFiles.map((file) => {
+        const data = fs.readFileSync(path.join(ligandDir, file), 'utf8');
+        const format = path.extname(file).substring(1);
+        const filePath = path.join(ligandDir, file);
+        return {
+            name: file,
+            data: data,
+            format: format,
+            filePath: filePath,
+        };
+    });
+
+    return {
+        resultsFiles,
+        receptorData,
+        ligandData,
+    };
+});
+
+// Deletar arquivos
+ipcMain.handle('dellFile', async (event, { filePath }) => {
+    try
+    {
+        fs.unlinkSync(filePath);
+        return true;
+    } catch (error)
+    {
+        console.error(error);
+        return false;
+    }
+});

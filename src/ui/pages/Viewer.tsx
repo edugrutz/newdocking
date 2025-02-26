@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import * as $3Dmol from '3dmol';
 
-const Viewer = () => {
+const Viewer = ({molViewer, molFormat}) => {
   const viewerContainerRef = useRef(null);
   const viewerRef = useRef(null);
   const [darkMode, setDarkMode] = useState(true);
@@ -9,11 +9,15 @@ const Viewer = () => {
   useEffect(() => {
     if (viewerContainerRef.current) {
       viewerRef.current = $3Dmol.createViewer(viewerContainerRef.current, { backgroundColor: 'black' });
-      viewerRef.current.setStyle({}, { cartoon: { color: 'spectrum' } });
+      viewerRef.current.addModel(molViewer, molFormat);
+      if (molFormat === 'pdb') {
+        viewerRef.current.setStyle({}, { cartoon: { color: 'spectrum' } });
+      }
       viewerRef.current.zoomTo();
       viewerRef.current.render();
     }
-  }, []);
+    console.log(molViewer);
+  }, [molViewer]);
 
   return (
     <div>
