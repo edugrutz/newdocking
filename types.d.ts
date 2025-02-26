@@ -4,6 +4,9 @@ type EventPayloadMapping = {
     'listFiles': any;
     'getFiles': any;
     'dellFile': { filePath: string };
+    'spawn': { command: string; args: string[] };
+    'get-resource-path': string;
+    'find-file': { type: string; fileName: string };
 };
 
 interface Window {
@@ -13,5 +16,8 @@ interface Window {
         listFiles: () => Promise<any>;
         getFiles: () => Promise<any>;
         dellFile: (filePath: string) => Promise<any>;
+        spawn: (command: string, args: string[]) => Promise<any>;
+        getResourcePath: (filename: string) => Promise<string>;
+        findFile: (type: string, fileName: string) => Promise<any>;
     };
 }

@@ -8,6 +8,9 @@ electron.contextBridge.exposeInMainWorld('electron', {
     listFiles: () => ipcInvoke('listFiles', {}),
     getFiles: () => ipcInvoke('getFiles', {}),
     dellFile: (filePath: string) => ipcInvoke('dellFile', { filePath }),
+    spawn: (command: string, args: string[]) => ipcInvoke('spawn', { command, args }),
+    getResourcePath: (filename: string) => ipcInvoke('get-resource-path', filename),
+    findFile: (type: string, fileName: string) => ipcInvoke('find-file', { type, fileName }),
 } satisfies Window['electron']);
 
 function ipcInvoke<Key extends keyof EventPayloadMapping>(

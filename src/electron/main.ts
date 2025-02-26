@@ -4,6 +4,7 @@ import fs from "fs";
 import { isDev } from "./util.js";
 import { getPreloadPath } from "./pathResolver.js";
 import { resourceLimits } from "worker_threads";
+import { spawn } from 'child_process';
 
 // Diretório atual
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
@@ -157,4 +158,63 @@ ipcMain.handle('dellFile', async (event, { filePath }) => {
         console.error(error);
         return false;
     }
+});
+
+// Acha o arquivo na resources
+function getResourcePath(filename: string): string {
+    return app.isPackaged
+        ? path.join(process.resourcesPath, 'resources', filename) // Caminho no build
+        : path.join(__dirname, '../resources', filename); // Caminho no dev
+}
+
+// Spawn process
+ipcMain.handle('spawn', async (event, { command, args }) => {
+    return new Promise((resolve, reject) => {
+        // Se o comando for 'obabel', encontre o caminho correto
+        if (command === 'obabel') {
+            command = getResourcePath(command);
+        }
+
+        const process = spawn(command, args);
+
+        let output = '';
+        process.stdout.on('data', (data) => {
+            output += data.toString();
+        });
+
+        process.stderr.on('data', (data) => {
+            output += data.toString();
+        });
+
+        process.on('close', (code) => {
+            resolve({ code, output });
+        });
+
+        process.on('error', (error) => {
+            reject(error);
+        });
+    });
+});
+
+// Achar o caminho do ligante, receptor ou resultado
+ipcMain.handle('find-file', async (event, { type, fileName }) => {
+    console.log('find-file:', { type, fileName });
+    if (!fileName) {
+        throw new Error('Name is required');
+    }
+    let filePath = "";
+    switch (type) {
+        case 'receptor':
+            filePath = path.join(__dirname, '../temp/receptors', fileName);
+            break;
+        case 'ligand':
+            filePath = path.join(__dirname, '../temp/ligands', fileName);
+            break;
+        case 'result':
+            filePath = path.join(__dirname, '../temp/results', fileName);
+            break;
+        default:
+            throw new Error(`Invalid type: ${type}`);
+    }
+    return filePath;
 });
