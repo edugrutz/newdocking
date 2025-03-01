@@ -174,6 +174,9 @@ ipcMain.handle('spawn', async (event, { command, args }) => {
         if (command === 'obabel') {
             command = getResourcePath(command);
         }
+        if (command === 'mk_prepare_ligand.py') {
+            command = getResourcePath(command);
+        }
 
         const process = spawn(command, args);
 
@@ -217,4 +220,9 @@ ipcMain.handle('find-file', async (event, { type, fileName }) => {
             throw new Error(`Invalid type: ${type}`);
     }
     return filePath;
+});
+
+// Obtém o caminho de saída
+ipcMain.handle('get-output-path', async (event, filename: string) => {
+    return path.join(__dirname, '../temp/temp', filename);
 });

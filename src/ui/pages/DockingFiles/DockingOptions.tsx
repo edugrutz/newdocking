@@ -1,8 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import BoxConfig from './BoxConfig'
 import DockViewer from './DockViewer'
 
-const DockingOptions = ({molViewer, molName}) => {
+const DockingOptions = ({molViewer, molName, preparedLigand}) => {
+
+  useEffect(() => {
+    if (preparedLigand) {
+      (document.getElementById('ligand') as HTMLInputElement).placeholder = preparedLigand;
+    }
+    console.log("mudou")
+  }, [preparedLigand])
+
   return (
     <div className='border p-2 mt-2'>
       <BoxConfig />
@@ -13,7 +21,7 @@ const DockingOptions = ({molViewer, molName}) => {
             <input type='text' className='form-control' disabled/>
 
             <label className='mt-2'>Ligand</label>
-            <input type='text' className='form-control' disabled/>
+            <input id='ligand' type='text' className='form-control' disabled/>
 
             <label className='mt-4'>Result name</label>
             <input type='text' className='form-control'/>

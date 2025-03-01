@@ -7,12 +7,13 @@ const Docking = ({receptors, ligands}) => {
 
   const [molName, setMolName] = useState('')
   const [selectedReceptor, setSelectedReceptor] = useState('')
+  const [preparedLigand, setPreparedLigand] = useState('')
 
   return (
     <div>
       <Receptor receptors={receptors} setSelectedReceptor={setSelectedReceptor}/>
-      <Ligand ligands={ligands}/>
-      <DockingOptions molViewer={selectedReceptor} molName={molName}/>
+      <Ligand ligands={ligands} setPreparedLigand={setPreparedLigand}/>
+      <DockingOptions molViewer={selectedReceptor} molName={molName} preparedLigand={preparedLigand}/>
     </div>
   )
 }

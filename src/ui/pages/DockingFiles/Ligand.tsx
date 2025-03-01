@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 
-const Ligand = ({ ligands }) => {
+const Ligand = ({ ligands, setPreparedLigand }) => {
   const [selectedLigand, setSelectedLigand] = useState('');
+  const [selectedLigandName, setSelectedLigandName] = useState('');
 
   const handleSelectChange = (event) => {
     const selectedLigandName = event.target.value;
@@ -9,15 +10,21 @@ const Ligand = ({ ligands }) => {
     if (selectedLigand) {
       setSelectedLigand(selectedLigand.filePath);
     }
+    setSelectedLigandName(selectedLigandName);
   };
 
+  // Preparar ligante
   const PrepareLigand = async () => {
     if (!selectedLigand) {
+      console.log('No ligand selected');
       return;
     }
     try {
-      const output = await window.electron.spawn('obabel', ['-i', 'sdf', selectedLigand, '-o', 'pdb', '-O', 'preparedLigand.pdb']);
-      console.log(output);
+      const outputPath = await window.electron.getOutputPath('preparedLigand.sdf');
+      const output = await window.electron.spawn('obabel', ['-isdf', selectedLigand, '-o', 'sdf', '-O', outputPath, '-h']);
+      const outputPath2 = await window.electron.getOutputPath('mkLigand.pdbqt');
+      const mk = await window.electron.spawn('mk_prepare_ligand.py', ['-i', outputPath, '-o', outputPath2]);
+      setPreparedLigand(selectedLigandName);
     } catch (error) {
       console.error(error);
     }

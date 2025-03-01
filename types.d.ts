@@ -7,6 +7,7 @@ type EventPayloadMapping = {
     'spawn': { command: string; args: string[] };
     'get-resource-path': string;
     'find-file': { type: string; fileName: string };
+    'get-output-path': string;
 };
 
 interface Window {
@@ -19,5 +20,6 @@ interface Window {
         spawn: (command: string, args: string[]) => Promise<any>;
         getResourcePath: (filename: string) => Promise<string>;
         findFile: (type: string, fileName: string) => Promise<any>;
+        getOutputPath: (filename: string) => Promise<string>;
     };
 }
