@@ -171,10 +171,7 @@ function getResourcePath(filename: string): string {
 ipcMain.handle('spawn', async (event, { command, args }) => {
     return new Promise((resolve, reject) => {
         // Se o comando for 'obabel', encontre o caminho correto
-        if (command === 'obabel') {
-            command = getResourcePath(command);
-        }
-        if (command === 'mk_prepare_ligand.py') {
+        if (command === 'obabel' || command === 'prepare_receptor' || command === 'mk_prepare_ligand.py' || command === 'vina') {
             command = getResourcePath(command);
         }
 
@@ -216,6 +213,9 @@ ipcMain.handle('find-file', async (event, { type, fileName }) => {
         case 'result':
             filePath = path.join(__dirname, '../temp/results', fileName);
             break;
+        case 'temp':
+        filePath = path.join(__dirname, '../temp/temp', fileName);
+            break;
         default:
             throw new Error(`Invalid type: ${type}`);
     }
@@ -226,3 +226,7 @@ ipcMain.handle('find-file', async (event, { type, fileName }) => {
 ipcMain.handle('get-output-path', async (event, filename: string) => {
     return path.join(__dirname, '../temp/temp', filename);
 });
+
+function or(arg0: boolean) {
+    throw new Error("Function not implemented.");
+}

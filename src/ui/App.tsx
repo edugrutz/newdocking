@@ -26,7 +26,6 @@ function App() {
       setResults(data.resultsFiles);
       setLigandsData(data.ligandData);
       setReceptorsData(data.receptorData);
-      console.log(data);
     });
   }
 

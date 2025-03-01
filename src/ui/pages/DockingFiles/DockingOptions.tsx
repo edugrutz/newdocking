@@ -2,14 +2,17 @@ import React, { useEffect } from 'react'
 import BoxConfig from './BoxConfig'
 import DockViewer from './DockViewer'
 
-const DockingOptions = ({molViewer, molName, preparedLigand}) => {
+const DockingOptions = ({molViewer, molName, preparedLigand, preparedReceptor, Dock}) => {
 
+  // Atualiza os nomes das moleculas preparadas
   useEffect(() => {
     if (preparedLigand) {
       (document.getElementById('ligand') as HTMLInputElement).placeholder = preparedLigand;
     }
-    console.log("mudou")
-  }, [preparedLigand])
+    if (preparedReceptor) {
+      (document.getElementById('receptor') as HTMLInputElement).placeholder = preparedReceptor;
+    }
+  }, [preparedLigand, preparedReceptor])
 
   return (
     <div className='border p-2 mt-2'>
@@ -18,7 +21,7 @@ const DockingOptions = ({molViewer, molName, preparedLigand}) => {
       <div className='mt-2'>
         <div className='m-2 p-2'>
             <label>Receptor</label>
-            <input type='text' className='form-control' disabled/>
+            <input id='receptor' type='text' className='form-control' disabled/>
 
             <label className='mt-2'>Ligand</label>
             <input id='ligand' type='text' className='form-control' disabled/>
@@ -26,7 +29,7 @@ const DockingOptions = ({molViewer, molName, preparedLigand}) => {
             <label className='mt-4'>Result name</label>
             <input type='text' className='form-control'/>
 
-            <button className='btn btn-warning mt-2'>Dock</button>
+            <button className='btn btn-warning mt-2' disabled={!preparedLigand || !preparedReceptor} onClick={Dock}>Dock</button>
         </div>
       </div>
       <div>
