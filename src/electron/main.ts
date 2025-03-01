@@ -5,6 +5,7 @@ import { isDev } from "./util.js";
 import { getPreloadPath } from "./pathResolver.js";
 import { resourceLimits } from "worker_threads";
 import { spawn } from 'child_process';
+import { get } from "http";
 
 // Diretório atual
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
@@ -140,8 +141,18 @@ ipcMain.handle('getFiles', async (event) => {
         };
     });
 
+    const resultsData = resultsFiles.map((file) => {
+        const data = fs.readFileSync(path.join(resultsDir, file), 'utf8');
+        const filePath = path.join(resultsDir, file);
+        return {
+            name: file,
+            data: data,
+            filePath: filePath,
+        };
+    });
+
     return {
-        resultsFiles,
+        resultsData,
         receptorData,
         ligandData,
     };
@@ -223,10 +234,33 @@ ipcMain.handle('find-file', async (event, { type, fileName }) => {
 });
 
 // Obtém o caminho de saída
-ipcMain.handle('get-output-path', async (event, filename: string) => {
-    return path.join(__dirname, '../temp/temp', filename);
+ipcMain.handle('get-output-path', async (event, {type, filename}) => {
+    switch (type) {
+        case 'results':
+            return path.join(__dirname, '../temp/results', filename);
+            break;
+        case 'temp':
+            return path.join(__dirname, '../temp/temp', filename);
+            break;
+        default:
+            throw new Error(`Invalid type: ${type}`);
+    }
 });
 
 function or(arg0: boolean) {
     throw new Error("Function not implemented.");
 }
+
+// Split result
+ipcMain.handle('split-result', async (event, { result }) => {
+    
+    // Copia o resultado para a pasta temp/temp/split
+    const resultName = path.basename(result);
+    const outputDir = path.join(__dirname, '../temp/temp/split');
+    const outputPath = path.join(__dirname, '../temp/temp/split', resultName);
+    fs.copyFileSync(result, outputPath);
+
+    const vina_split = getResourcePath('vina_split');
+    const process = spawn(vina_split, ['--input', outputPath], { cwd: outputDir });
+
+});

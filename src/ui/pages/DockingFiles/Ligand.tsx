@@ -20,9 +20,9 @@ const Ligand = ({ ligands, setPreparedLigand }) => {
       return;
     }
     try {
-      const outputPath = await window.electron.getOutputPath('preparedLigand.sdf');
+      const outputPath = await window.electron.getOutputPath('temp','preparedLigand.sdf');
       const output = await window.electron.spawn('obabel', ['-isdf', selectedLigand, '-o', 'sdf', '-O', outputPath, '-h']);
-      const outputPath2 = await window.electron.getOutputPath('mkLigand.pdbqt');
+      const outputPath2 = await window.electron.getOutputPath('temp','mkLigand.pdbqt');
       const mk = await window.electron.spawn('mk_prepare_ligand.py', ['-i', outputPath, '-o', outputPath2]);
       setPreparedLigand(selectedLigandName);
     } catch (error) {

@@ -6,6 +6,7 @@ import Navbar from './pages/Navbar';
 import Docking from './pages/Docking';
 import List from './pages/List';
 import { get } from '3dmol';
+import Result from './pages/Result';
 
 function App() {
     const [receptorsData, setReceptorsData] = useState<any[]>([]);
@@ -16,6 +17,8 @@ function App() {
     const [molFormat, setMolFormat] = useState(null);
     const [molName, setMolName] = useState("");
 
+    const [selectedResult, setSelectedResult] = useState<any>();
+
     useEffect(() => {
       getFiles();
   }, []);
@@ -23,7 +26,7 @@ function App() {
    // Listar arquivos e pegar data
    async function getFiles() {
     const data = await window.electron.getFiles() .then ((data) => {
-      setResults(data.resultsFiles);
+      setResults(data.resultsData);
       setLigandsData(data.ligandData);
       setReceptorsData(data.receptorData);
     });
@@ -77,12 +80,13 @@ function App() {
                 <Navbar handleLigandUpload={handleLigandUpload} handleReceptorUpload={handleReceptorUpload}/>
                 <div className='d-flex flex-grow-1'>
                     <aside className='sidebar'>
-                        <List receptors={receptorsData} ligands={ligandsData} results={results} setMolViewer={setMolViewer} setMolFormat={setMolFormat} getFiles={getFiles} setMolName={setMolName}/>
+                        <List receptors={receptorsData} ligands={ligandsData} results={results} setMolViewer={setMolViewer} setMolFormat={setMolFormat} getFiles={getFiles} setMolName={setMolName} setSelectedResult={setSelectedResult}/>
                     </aside>
                     <main className='content ms-2 w-100 me-3'>
                         <Routes>
                             <Route path="/" element={<Viewer molViewer={molViewer} molFormat={molFormat} molName={molName}/>} />
-                            <Route path="/docking" element={<Docking receptors={receptorsData} ligands={ligandsData}/>} />
+                            <Route path="/docking" element={<Docking receptors={receptorsData} ligands={ligandsData} getFiles={getFiles}/>} />
+                            <Route path="/result" element={<Result results={results} selectedResult={selectedResult}/>} />
                         </Routes>
                     </main>
                 </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const List = ({ receptors, ligands, results, setMolViewer, setMolFormat, getFiles, setMolName}) => {
+const List = ({ receptors, ligands, results, setMolViewer, setMolFormat, getFiles, setMolName, setSelectedResult}) => {
 
     const navigate = useNavigate();
 
@@ -24,7 +24,7 @@ const List = ({ receptors, ligands, results, setMolViewer, setMolFormat, getFile
             <label>Results</label>
             {results.map((result, index) => (
                 <div className='border border-light p-1 d-flex align-items-center mt-1' key={index}>
-                    <label onClick={() => { console.log(result.data) }}>{result.name}</label>
+                    <label style={{cursor:'pointer'}} onClick={() => {setSelectedResult(result.name); navigate('/result')}}>{result.name}</label>
                 </div>
             ))}
         </div>

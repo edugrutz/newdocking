@@ -24,7 +24,7 @@ const Receptor = ({ receptors, setSelectedReceptor, setPreparedReceptor }) => {
             return;
         }
         try {
-            const outputPath = await window.electron.getOutputPath('preparedReceptor.pdbqt');
+            const outputPath = await window.electron.getOutputPath('temp','preparedReceptor.pdbqt');
             const output = await window.electron.spawn('prepare_receptor', ['-r', selectedReceptorPath, '-o', outputPath]);
             setPreparedReceptor(selectedReceptorName);
         } catch (error) {
