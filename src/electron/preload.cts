@@ -13,6 +13,11 @@ electron.contextBridge.exposeInMainWorld('electron', {
     findFile: (type: string, fileName: string) => ipcInvoke('find-file', { type, fileName }),
     getOutputPath: (type: string, filename: string) => ipcInvoke('get-output-path', { type, filename }),
     splitResult: (result: string) => ipcInvoke('split-result', { result }),
+    generateConfigFile: (centerBox: number[], sizeBox: number[]) => ipcInvoke('generate-config-file', { centerBox, sizeBox }),
+    listSplit: () => ipcInvoke('listSplit', {}),
+    copyReceptor: (receptorPath: string, filename: string) => ipcInvoke('copy-receptor', { receptorPath, filename }),
+    getReceptor: (resultname: string) => ipcInvoke('get-receptor', { resultname }),
+    getTempsFolderPath: (folderName: string) => ipcInvoke('get-temps-folder-path', { folderName }),
     } satisfies Window['electron']);
 
 function ipcInvoke<Key extends keyof EventPayloadMapping>(

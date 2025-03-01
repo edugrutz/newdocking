@@ -9,6 +9,11 @@ type EventPayloadMapping = {
     'find-file': { type: string; fileName: string };
     'get-output-path': { type: string; filename: string };
     'split-result': { result: string };
+    'generate-config-file': { centerBox: number[]; sizeBox: number[] };
+    'listSplit': any;
+    'copy-receptor': { receptorPath: string; filename: string };
+    'get-receptor': { resultname: string };
+    'get-temps-folder-path': { folderName: string };
     
 };
 
@@ -24,5 +29,10 @@ interface Window {
         findFile: (type: string, fileName: string) => Promise<any>;
         getOutputPath: (type: string, filename: string) => Promise<any>;
         splitResult: (result: string) => Promise<any>;
+        generateConfigFile: (centerBox: number[], sizeBox: number[]) => Promise<any>;
+        listSplit: () => Promise<any>;
+        copyReceptor: (receptorPath: string, filename: string) => Promise<any>;
+        getReceptor: (resultname: string) => Promise<any>;
+        getTempsFolderPath: (folderName: string) => Promise<any>;
     };
 }

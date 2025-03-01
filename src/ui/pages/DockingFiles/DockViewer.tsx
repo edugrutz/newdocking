@@ -1,14 +1,12 @@
 import { useRef, useEffect, useState } from 'react';
 import * as $3Dmol from '3dmol';
 
-const DockViewer = ({molViewer, molName}) => {
+const DockViewer = ({molViewer, molName, sizeBox, centerBox}) => {
   const viewerContainerRef = useRef(null);
   const viewerRef = useRef(null);
   const [darkMode, setDarkMode] = useState(true);
 
   const box = true;
-  const centerBox = [0, 0, 0];
-  const sizeBox = [20, 20, 20];
 
   useEffect(() => {
     if (viewerContainerRef.current) {
@@ -34,7 +32,7 @@ const DockViewer = ({molViewer, molName}) => {
         viewerRef.current.render();
       }
     }
-  }, [molViewer]);
+  }, [molViewer, sizeBox, centerBox]);
 
   return (
     <div>

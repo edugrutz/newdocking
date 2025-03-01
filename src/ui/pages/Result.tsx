@@ -1,23 +1,29 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import ResultViewer from './ResultViewer';
 
 const Result = ({results, selectedResult}) => {
 
-  function teste() {
-    const selectedResultPath = results.find(result => result.name === selectedResult).filePath;
+  const [viewerData, setViewerData] = React.useState([]);
 
-    window.electron.splitResult(selectedResultPath).then((result) => {
-      console.log(result);
-    }
-    ).catch((error) => {
-      console.error(error);
-    }
-    );
+  useEffect(() => {
+    SplitResult();
+  }, [selectedResult]);
+
+  async function SplitResult() {
+    const selectedResultPath = results.find(result => result.name === selectedResult).filePath;
+    const split = await window.electron.splitResult(selectedResultPath);
+    setData();
+  }
+
+  async function setData() {
+    const data = await window.electron.listSplit();
+    setViewerData(data);
   }
 
   return (
     <div>
         <h1>{selectedResult}</h1>
-        <button className='btn btn-warning' onClick={teste}>Teste</button>
+        <ResultViewer viewerData={viewerData} selectedResult={selectedResult} setData={setData}/>
     </div>
   )
 }

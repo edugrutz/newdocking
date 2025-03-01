@@ -1,14 +1,32 @@
 import React from 'react'
 
-const BoxConfig = () => {
+const BoxConfig = ({setCenterBox, setSizeBox, centerBox, sizeBox}) => {
 
-    const setCenter = (index, value) => {
-        console.log('center', index, value)
-    }
+  const setCenter = (index, value) => {
+    const newValue = parseInt(value, 10);
 
-    const setSize = (index, value) => {
-        console.log('size', index, value)
+    // Verifica se newValue é um número válido
+    if (!isNaN(newValue)) {
+      const newCoordinates = [...centerBox];
+      newCoordinates[index] = newValue;
+      setCenterBox(newCoordinates);
+    } else {
+      console.error('Valor inválido fornecido para o centro. Deve ser numérico.');
     }
+  };
+
+  const setSize = (index, value) => {
+    const newValue = parseInt(value, 10);
+
+    // Verifica se newValue é um número válido
+    if (!isNaN(newValue)) {
+      const newCoordinates = [...sizeBox];
+      newCoordinates[index] = newValue;
+      setSizeBox(newCoordinates);
+    } else {
+      console.error('Valor inválido fornecido para o tamanho. Deve ser numérico.');
+    }
+  };
 
   return (
     <div className='p-2'>

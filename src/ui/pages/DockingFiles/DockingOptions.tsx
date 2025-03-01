@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import BoxConfig from './BoxConfig'
 import DockViewer from './DockViewer'
 
-const DockingOptions = ({molViewer, molName, preparedLigand, preparedReceptor, setResultName, Dock}) => {
+const DockingOptions = ({molViewer, molName, preparedLigand, preparedReceptor, setResultName, Dock, setCenterBox, setSizeBox, centerBox, sizeBox}) => {
 
   // Atualiza os nomes das moleculas preparadas
   useEffect(() => {
@@ -22,7 +22,7 @@ const DockingOptions = ({molViewer, molName, preparedLigand, preparedReceptor, s
 
   return (
     <div className='border p-2 mt-2'>
-      <BoxConfig />
+      <BoxConfig setSizeBox={setSizeBox} setCenterBox={setCenterBox} centerBox={centerBox} sizeBox={sizeBox}/>
       <div className='d-flex'>
       <div className='mt-2'>
         <div className='m-2 p-2'>
@@ -39,7 +39,7 @@ const DockingOptions = ({molViewer, molName, preparedLigand, preparedReceptor, s
         </div>
       </div>
       <div>
-        <DockViewer molViewer={molViewer} molName={molName}/>
+        <DockViewer molViewer={molViewer} molName={molName} sizeBox={sizeBox} centerBox={centerBox}/>
       </div>
     </div>
     </div>

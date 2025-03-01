@@ -98,6 +98,30 @@ ipcMain.handle('listFiles', async (event) => {
     };
 });
 
+// Listar resultados splitados
+ipcMain.handle('listSplit', async (event) => {
+    const splitDir = path.join(__dirname, '../temp/temp/split');
+    let fileContents: { name: string, data: string }[] = [];
+
+    try {
+        const files = fs.readdirSync(splitDir);
+        fileContents = files.map((file) => {
+            const fullPath = path.join(splitDir, file);
+            const data = fs.readFileSync(fullPath, 'utf8');
+            return {
+                name: file,  
+                data: data,
+                filePath: fullPath,    
+            };
+        });
+    } catch (error) {
+        console.error(error);
+    }
+
+    return fileContents; 
+});
+
+
 // Pegar arquivos e data
 ipcMain.handle('getFiles', async (event) => {
     const receptorDir = path.join(__dirname, '../temp/receptors');
@@ -253,14 +277,77 @@ function or(arg0: boolean) {
 
 // Split result
 ipcMain.handle('split-result', async (event, { result }) => {
-    
-    // Copia o resultado para a pasta temp/temp/split
+
     const resultName = path.basename(result);
     const outputDir = path.join(__dirname, '../temp/temp/split');
     const outputPath = path.join(__dirname, '../temp/temp/split', resultName);
-    fs.copyFileSync(result, outputPath);
-
     const vina_split = getResourcePath('vina_split');
+
+    // Limpa a pasta
+    fs.readdirSync(outputDir).forEach(file => {
+        fs.unlinkSync(`${outputDir}/${file}`);
+      });
+    
+    fs.copyFileSync(result, outputPath); 
     const process = spawn(vina_split, ['--input', outputPath], { cwd: outputDir });
 
 });
+
+// Gerar config.txt
+ipcMain.handle('generate-config-file', async (event, { centerBox, sizeBox }) => {
+    const outputPath = path.join(__dirname, '../temp/temp/config.txt');
+
+    return new Promise((resolve, reject) => {
+        const boxconfig = getResourcePath('boxConfig.py');
+        const args = [boxconfig,...centerBox, ...sizeBox, outputPath];
+        const process = spawn('python3', args);
+
+        console.log('generate-config-file:', args);
+
+        process.stdout.on('data', (data) => {
+            console.log(`stdout: ${data}`);
+        });
+
+        process.stderr.on('data', (data) => {
+            console.error(`stderr: ${data}`);
+        });
+
+        process.on('close', (code) => {
+            if (code === 0) {
+                resolve({ code, outputPath });
+            } else {
+                reject(new Error(`Process exited with code ${code}`));
+            }
+        });
+
+        process.on('error', (error) => {
+            reject(error);
+        });
+    });
+});
+
+// Copiar receptor
+ipcMain.handle('copy-receptor', async (event, { receptorPath, filename }) => {
+    const outputDir = path.join(__dirname, '../temp/resultRec');
+    const outputPath = path.join(outputDir, filename);
+
+    fs.copyFileSync(receptorPath, outputPath);
+
+    return outputPath;
+});
+
+// Pegar conteudo do receptor do resultado
+ipcMain.handle('get-receptor', async (event, {resultname}) => {
+    console.log('Tipo de resultname:', typeof resultname, resultname);
+    if (!resultname) {
+        throw new Error('resultName is required');
+    }
+    const resultPath = path.join(__dirname, '../temp/resultRec', resultname);
+    return fs.readFileSync(resultPath, 'utf8');
+});
+
+// Pegar o caminho da pasta temp
+ipcMain.handle('get-temps-folder-path', async (event, { folderName }) => {
+    return path.join(__dirname, '../temp', folderName);
+}
+);

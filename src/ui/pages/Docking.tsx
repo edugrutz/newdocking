@@ -11,13 +11,21 @@ const Docking = ({receptors, ligands, getFiles}) => {
   const [preparedReceptor, setPreparedReceptor] = useState('')
   const [resultName, setResultName] = useState('')
 
+  const[centerBox, setCenterBox] = useState([0, 0, 0]);
+  const[sizeBox, setSizeBox] = useState([20, 20, 20]);
+
   // Docking
   const Dock = async () => {
     const receptorPath = await window.electron.findFile('temp', 'preparedReceptor');
     const ligandPath = await window.electron.findFile('temp', 'mkLigand');
 
+    // Faz uma cópia do receptor preparado para poder ser exibido sempre no seu resultado
+    const copyReceptor = await window.electron.copyReceptor(receptorPath + '.pdbqt', resultName + '.pdbqt');
+
     const configPath = await window.electron.findFile('temp', 'config.txt');
     const outputPath = await window.electron.getOutputPath('results', resultName + '.pdbqt');
+
+    await window.electron.generateConfigFile(centerBox, sizeBox);
 
     const vina = await window.electron.spawn('vina', [
       '--receptor', receptorPath + '.pdbqt',
@@ -32,7 +40,7 @@ const Docking = ({receptors, ligands, getFiles}) => {
     <div>
       <Receptor receptors={receptors} setSelectedReceptor={setSelectedReceptor} setPreparedReceptor={setPreparedReceptor}/>
       <Ligand ligands={ligands} setPreparedLigand={setPreparedLigand}/>
-      <DockingOptions molViewer={selectedReceptor} molName={molName} preparedLigand={preparedLigand} preparedReceptor={preparedReceptor} setResultName={setResultName} Dock={Dock}/>
+      <DockingOptions molViewer={selectedReceptor} molName={molName} preparedLigand={preparedLigand} preparedReceptor={preparedReceptor} setResultName={setResultName} Dock={Dock} setCenterBox={setCenterBox} setSizeBox={setSizeBox} centerBox={centerBox} sizeBox={sizeBox}/>
     </div>
   )
 }
