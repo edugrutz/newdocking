@@ -18,6 +18,7 @@ electron.contextBridge.exposeInMainWorld('electron', {
     copyReceptor: (receptorPath: string, filename: string) => ipcInvoke('copy-receptor', { receptorPath, filename }),
     getReceptor: (resultname: string) => ipcInvoke('get-receptor', { resultname }),
     getTempsFolderPath: (folderName: string) => ipcInvoke('get-temps-folder-path', { folderName }),
+    downloadResult: (filepath: string) => ipcInvoke('download-result', { filepath }),
     } satisfies Window['electron']);
 
 function ipcInvoke<Key extends keyof EventPayloadMapping>(

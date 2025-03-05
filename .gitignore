@@ -13,6 +13,10 @@ dist-react
 dist-electron
 teste.py
 *.local
+temp/ligands/*
+temp/receptors/*
+temp/results/*
+temp/temp/split/*
 
 # Editor directories and files
 .vscode/*

@@ -14,6 +14,7 @@ type EventPayloadMapping = {
     'copy-receptor': { receptorPath: string; filename: string };
     'get-receptor': { resultname: string };
     'get-temps-folder-path': { folderName: string };
+    'download-result': { filepath: string };
     
 };
 
@@ -34,5 +35,6 @@ interface Window {
         copyReceptor: (receptorPath: string, filename: string) => Promise<any>;
         getReceptor: (resultname: string) => Promise<any>;
         getTempsFolderPath: (folderName: string) => Promise<any>;
+        downloadResult: (filepath: string) => Promise<any>;
     };
 }

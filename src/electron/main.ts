@@ -15,13 +15,17 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 // Cria a janela e configurações principais
 app.on("ready", () => {
     const mainWindow = new BrowserWindow({
-        // autoHideMenuBar : true,
         webPreferences: {
             preload: getPreloadPath(),
+            devTools: isDev(),
         },
     });
+
+    mainWindow.maximize();
+
     if (isDev()) {
         mainWindow.loadURL("http://localhost:5123");
+        mainWindow.webContents.openDevTools();
     } else {
         mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'));
     }
@@ -356,3 +360,31 @@ ipcMain.handle('get-temps-folder-path', async (event, { folderName }) => {
     return path.join(__dirname, '../temp', folderName);
 }
 );
+
+// Backend (Electron)
+ipcMain.handle('download-result', async (event, {filepath}) => {
+    try {
+        if (!filepath) throw new Error('Caminho do arquivo não especificado');
+        
+        const window = BrowserWindow.getFocusedWindow();
+        if (!window) throw new Error('No focused window');
+
+        const { filePath } = await dialog.showSaveDialog(window, {
+            title: 'Salvar arquivo',
+            defaultPath: filepath,
+            buttonLabel: 'Salvar',
+            filters: [
+                { name: 'PDB Files', extensions: ['pdb'] },
+                { name: 'All Files', extensions: ['*'] }
+            ],
+        });
+
+        if (!filePath) return { success: false };
+
+        fs.copyFileSync(filepath, filePath);
+        return { success: true, filePath };
+    } catch (error) {
+        console.error('Erro ao baixar o arquivo:', error);
+        return { success: false, error: (error as Error).message };
+    }
+});

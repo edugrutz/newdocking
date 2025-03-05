@@ -63,10 +63,21 @@ const ResultViewer = ({viewerData, selectedResult, activeTab}) => {
         });
     }
 
+    const handleDownload = async () => {
+        const filepath = viewerData[resultNumber].filePath;
+        const response = await window.electron.downloadResult(filepath);
+        if (response.success) {
+          alert(`Arquivo salvo em: ${response.filePath}`);
+        } else {
+          alert('Falha ao salvar o arquivo.');
+        }
+      };
+
   return (
     <div className='mt-3'>
         <div className='d-flex align-items-center'>
             <h4>Energy Value: <strong>{energyValue ? `${energyValue} kcal/mol` : 'Loading...'}</strong></h4> 
+            <button className='btn btn-sm btn-outline-success mb-2 ms-2' onClick={handleDownload}><i className="bi bi-download"></i></button>
             <div className='d-flex align-items-center ms-auto'>
                 <h4 className='ms-2'>{resultNumber + 1}/{viewerData.length}</h4>
                 <div className='btn-group mb-1 ms-3'>
