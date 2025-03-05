@@ -253,6 +253,9 @@ ipcMain.handle('find-file', async (event, { type, fileName }) => {
         case 'temp':
         filePath = path.join(__dirname, '../temp/temp', fileName);
             break;
+        case 'resultRec':
+            filePath = path.join(__dirname, '../temp/resultRec', fileName);
+            break;
         default:
             throw new Error(`Invalid type: ${type}`);
     }

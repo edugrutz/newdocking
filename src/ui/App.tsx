@@ -86,7 +86,7 @@ function App() {
                         <Routes>
                             <Route path="/" element={<Viewer molViewer={molViewer} molFormat={molFormat} molName={molName}/>} />
                             <Route path="/docking" element={<Docking receptors={receptorsData} ligands={ligandsData} getFiles={getFiles}/>} />
-                            <Route path="/result" element={<Result results={results} selectedResult={selectedResult}/>} />
+                            <Route path="/result" element={<Result results={results} selectedResult={selectedResult} getFiles={getFiles}/>} />
                         </Routes>
                     </main>
                 </div>

@@ -14,8 +14,12 @@ const Docking = ({receptors, ligands, getFiles}) => {
   const[centerBox, setCenterBox] = useState([0, 0, 0]);
   const[sizeBox, setSizeBox] = useState([20, 20, 20]);
 
+  const [loading, setLoading] = useState(false);
+
   // Docking
   const Dock = async () => {
+    try{
+    setLoading(true);
     const receptorPath = await window.electron.findFile('temp', 'preparedReceptor');
     const ligandPath = await window.electron.findFile('temp', 'mkLigand');
 
@@ -34,13 +38,19 @@ const Docking = ({receptors, ligands, getFiles}) => {
         '--out', outputPath]);
 
     getFiles();
+
+    } catch (error) {
+      console.error("Erro ao realizar o docking", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div>
       <Receptor receptors={receptors} setSelectedReceptor={setSelectedReceptor} setPreparedReceptor={setPreparedReceptor}/>
       <Ligand ligands={ligands} setPreparedLigand={setPreparedLigand}/>
-      <DockingOptions molViewer={selectedReceptor} molName={molName} preparedLigand={preparedLigand} preparedReceptor={preparedReceptor} setResultName={setResultName} Dock={Dock} setCenterBox={setCenterBox} setSizeBox={setSizeBox} centerBox={centerBox} sizeBox={sizeBox}/>
+      <DockingOptions molViewer={selectedReceptor} molName={molName} preparedLigand={preparedLigand} preparedReceptor={preparedReceptor} setResultName={setResultName} Dock={Dock} setCenterBox={setCenterBox} setSizeBox={setSizeBox} centerBox={centerBox} sizeBox={sizeBox} loading={loading}/>
     </div>
   )
 }

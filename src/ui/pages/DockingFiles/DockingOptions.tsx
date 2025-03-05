@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import BoxConfig from './BoxConfig'
 import DockViewer from './DockViewer'
 
-const DockingOptions = ({molViewer, molName, preparedLigand, preparedReceptor, setResultName, Dock, setCenterBox, setSizeBox, centerBox, sizeBox}) => {
+const DockingOptions = ({molViewer, molName, preparedLigand, preparedReceptor, setResultName, Dock, setCenterBox, setSizeBox, centerBox, sizeBox, loading}) => {
 
   // Atualiza os nomes das moleculas preparadas
   useEffect(() => {
@@ -34,8 +34,15 @@ const DockingOptions = ({molViewer, molName, preparedLigand, preparedReceptor, s
 
             <label className='mt-4'>Result name</label>
             <input onChange={handleChange} type='text' className='form-control'/>
-
-            <button className='btn btn-warning mt-2' disabled={!preparedLigand || !preparedReceptor} onClick={Dock}>Dock</button>
+            
+            <div className='mt-2 align-items-center d-flex'> 
+              <button className='btn btn-warning' disabled={!preparedLigand || !preparedReceptor || loading} onClick={Dock}>Dock</button>
+              {loading && (
+                <div className="spinner-border ms-3" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+              )}
+            </div>
         </div>
       </div>
       <div>

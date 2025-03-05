@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import ResultViewer from './ResultViewer';
 import ResultSummary from './ResultSummary';
 
-const Result = ({results, selectedResult}) => {
+const Result = ({results, selectedResult, getFiles}) => {
 
   const [viewerData, setViewerData] = React.useState([]);
   const [activeTab, setActiveTab] = React.useState('viewer');
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     SplitResult();
@@ -35,9 +38,21 @@ const Result = ({results, selectedResult}) => {
     setViewerData(pdbFiles); // Passa apenas os arquivos filtrados
   }
 
+  async function dellResult() {
+    const resultPath = await window.electron.findFile('result', selectedResult);
+    const resultRecPath = await window.electron.findFile('resultRec', selectedResult);
+    await window.electron.dellFile(resultPath);
+    await window.electron.dellFile(resultRecPath);
+    await getFiles();
+    navigate('/');
+  }
+
   return (
     <div>
-        <h2>Result: <strong>{selectedResult}</strong></h2>
+      <div className='d-flex justify-content-between'>
+        <h2>Result: <strong>{selectedResult}</strong></h2> 
+        <button className='btn btn-outline-danger' onClick={dellResult}><i className="bi bi-trash"></i></button>
+      </div>     
         <ul className="nav nav-tabs">
         <li className="nav-item">
           <button className={`nav-link text-light ${activeTab === 'viewer' ? 'active text-dark' : ''}`} onClick={() => setActiveTab('viewer')}>
