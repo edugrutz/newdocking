@@ -8,6 +8,7 @@ const ResultViewer = ({viewerData, selectedResult, setData}) => {
     const [darkMode, setDarkMode] = useState(true);
     const [resultNumber, setResultNumber] = useState(1);
     const [viewerMol, setViewerMol] = useState(null);
+    const [energyValue, setEnergyValue] = useState(null);
 
     useEffect(() => {
         if (selectedResult) {
@@ -29,11 +30,6 @@ const ResultViewer = ({viewerData, selectedResult, setData}) => {
     }
     , []);
 
-    useEffect(() => {
-        Split();
-    }
-    , [selectedResult]);
-
     async function Split() {
         let folder = await window.electron.getTempsFolderPath('temp/split')
         for (let i = 1; i < viewerData.length; i++) {
@@ -46,11 +42,10 @@ const ResultViewer = ({viewerData, selectedResult, setData}) => {
 
     useEffect(() => {
         showViewer();
-    }, [resultNumber]);
+    }, [resultNumber, viewerData]);
 
     async function showViewer() {
-        console.log(viewerData);
-        if (viewerContainerRef.current) {
+        if (viewerContainerRef.current && viewerMol) {
             if (!viewerRef.current) {
                 viewerRef.current = $3Dmol.createViewer(viewerContainerRef.current, { backgroundColor: 'black' });
             }
@@ -60,7 +55,14 @@ const ResultViewer = ({viewerData, selectedResult, setData}) => {
             viewerRef.current.setStyle({model: firstModel}, { cartoon: { color: 'spectrum' } });
 
             const secondModel = viewerRef.current.addModel(viewerData[resultNumber].data, 'pdb');
-            // viewerRef.current.setStyle({model: secondModel}, {stick:{} });
+            const energyLine = viewerData[resultNumber].data.split('\n').find(line => line.includes('REMARK VINA RESULT:'));
+            if (energyLine) {
+                const energy = energyLine.split(/\s+/)[3];
+                console.log(energy);
+                viewerRef.current.addLabel(energy, {position: {x: 0, y: 0, z: 0}, backgroundColor: 'black', backgroundOpacity: 0.7});
+                setEnergyValue(energy);
+            }
+            viewerRef.current.setStyle({model: secondModel}, {stick:{} });
 
             viewerRef.current.zoomTo();
             viewerRef.current.render();
@@ -77,14 +79,24 @@ const ResultViewer = ({viewerData, selectedResult, setData}) => {
         });
     }
 
-
   return (
-    <div>
-        <div className='btn-group'>
-            <button className='btn btn-primary' onClick={()=> {changeResultNumber(-1)}}>Previous</button>
-            <button className='btn btn-primary' onClick={()=> {changeResultNumber(+1)}}>Next</button>
+    <div className='mt-3'>
+        <div className='d-flex align-items-center'>
+            <h4>Energy Value: {energyValue ? `${energyValue} kcal/mol` : 'Loading...'}</h4>    
+            <div className='btn-group mb-1 ms-3'>
+                <button className='btn btn-secondary' onClick={()=> {changeResultNumber(-1)}}>Previous</button>
+                <button className='btn btn-secondary' onClick={()=> {changeResultNumber(+1)}}>Next</button>
+            </div>
+            <h4 className='ms-2'>{resultNumber}/{viewerData.length - 1}</h4>
         </div>
-        <div ref={viewerContainerRef} style={{ width: '400px', height: '425px', position: 'relative' }}></div>
+        <div style={{position: 'relative'}}>
+            {darkMode ?
+                <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {viewerRef.current.setBackgroundColor('white'); setDarkMode(false)}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle-fill"></i></button>
+                :
+                <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {viewerRef.current.setBackgroundColor('black'); setDarkMode(true)}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle"></i></button>
+            }
+            <div ref={viewerContainerRef} style={{ width: '100%', height: '425px', position: 'relative' }}></div>
+        </div>
     </div>
   )
 }
