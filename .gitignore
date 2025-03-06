@@ -12,6 +12,7 @@ dist
 dist-react
 dist-electron
 teste.py
+resources
 *.local
 temp/ligands/*
 temp/receptors/*
