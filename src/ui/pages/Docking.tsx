@@ -42,6 +42,7 @@ const Docking: React.FC<DockingProps> = ({receptors, ligands, getFiles}) => {
        '--ligand', ligandPath + '.pdbqt',
        '--config', configPath,
         '--out', outputPath]);
+    console.log(vina);
 
     getFiles();
 

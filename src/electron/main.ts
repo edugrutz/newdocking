@@ -9,6 +9,29 @@ import { get } from "http";
 
 //app.disableHardwareAcceleration();
 
+function createAppDirectories() {
+    const baseDir = process.env.NODE_ENV === 'development' 
+      ? path.join(__dirname, '../../temp')
+      : path.join(app.getPath('userData'), 'temp');
+  
+    const requiredDirs = [
+      'results',
+      'ligands',
+      'temp',
+      'resultRec',
+      'temp/split'
+    ];
+  
+    requiredDirs.forEach(dir => {
+      const fullPath = path.join(baseDir, dir);
+      if (!fs.existsSync(fullPath)) {
+        fs.mkdirSync(fullPath, { recursive: true });
+      }
+    });
+  }
+
+  app.whenReady().then(createAppDirectories);
+
 // Diretório atual
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
@@ -17,7 +40,7 @@ app.on("ready", () => {
     const mainWindow = new BrowserWindow({
         webPreferences: {
             preload: getPreloadPath(),
-            devTools: isDev(),
+            devTools: true,
         },
     });
 
@@ -38,6 +61,7 @@ ipcMain.handle('open-dialog', async (event, { method, format, config }) => {
         const files = await dialog.showOpenDialog(config);
 
         if (files.canceled && files.filePaths.length === 0) return null;
+
         const dataFiles = files.filePaths.map((filePath) => {
             try
             {
@@ -45,11 +69,19 @@ ipcMain.handle('open-dialog', async (event, { method, format, config }) => {
                 const data = fs.readFileSync(file, 'utf8');
                 const fileName = path.basename(file);
 
-            let destinationDir;
+                let destinationDir;
             if (format === 'receptor') {
-                destinationDir = path.join(__dirname, '../temp/receptors');
+                if (isDev()) {
+                    destinationDir = path.join(__dirname, '../temp/receptors');
+                } else {
+                    destinationDir = path.join(app.getPath('userData'), 'temp/receptors');
+                }
             } else if (format === 'ligand') {
-                destinationDir = path.join(__dirname, '../temp/ligands');
+                if (isDev()) {
+                    destinationDir = path.join(__dirname, '../temp/ligands');
+                } else {
+                    destinationDir = path.join(app.getPath('userData'), 'temp/ligands');
+                }
             } else {
                 throw new Error(`Invalid format: ${format}`);
             }
@@ -78,32 +110,6 @@ ipcMain.handle('open-dialog', async (event, { method, format, config }) => {
     }
 });
 
-//Listar arquivos da pasta temp
-ipcMain.handle('listFiles', async (event) => {
-    const receptorDir = path.join(__dirname, '../temp/receptors');
-    const ligandDir = path.join(__dirname, '../temp/ligands');
-    const resultsDir = path.join(__dirname, '../temp/results');
-    let receptorFiles: string[] = [];
-    let ligandFiles: string[] = [];
-    let resultsFiles: string[] = [];
-
-    try
-    {
-        receptorFiles = fs.readdirSync(receptorDir);
-        ligandFiles = fs.readdirSync(ligandDir);
-        resultsFiles = fs.readdirSync(resultsDir);
-    } catch (error)
-    {
-        console.error(error);
-    }
-
-    return {
-        receptorFiles,
-        ligandFiles,
-        resultsFiles,
-    };
-});
-
 // Listar resultados splitados
 ipcMain.handle('listSplit', async (event) => {
     const splitDir = path.join(__dirname, '../temp/temp/split');
@@ -127,12 +133,22 @@ ipcMain.handle('listSplit', async (event) => {
     return fileContents; 
 });
 
-
 // Pegar arquivos e data
 ipcMain.handle('getFiles', async (event) => {
-    const receptorDir = path.join(__dirname, '../temp/receptors');
-    const ligandDir = path.join(__dirname, '../temp/ligands');
-    const resultsDir = path.join(__dirname, '../temp/results');
+    let receptorDir;
+    let ligandDir;
+    let resultsDir;
+
+    if (isDev()) {
+        receptorDir = path.join(__dirname, '../temp/receptors');
+        ligandDir = path.join(__dirname, '../temp/ligands');
+        resultsDir = path.join(__dirname, '../temp/results');
+    } else {
+        receptorDir = path.join(app.getPath('userData'), 'temp/receptors');
+        ligandDir = path.join(app.getPath('userData'), 'temp/ligands');
+        resultsDir = path.join(app.getPath('userData'), 'temp/results');
+    }
+    
     let receptorFiles: string[] = [];
     let ligandFiles: string[] = [];
     let resultsFiles: string[] = [];
@@ -239,26 +255,25 @@ ipcMain.handle('spawn', async (event, { command, args }) => {
 
 // Achar o caminho do ligante, receptor ou resultado
 ipcMain.handle('find-file', async (event, { type, fileName }) => {
-    console.log('find-file:', { type, fileName });
     if (!fileName) {
         throw new Error('Name is required');
     }
     let filePath = "";
     switch (type) {
         case 'receptor':
-            filePath = path.join(__dirname, '../temp/receptors', fileName);
+            isDev() ? filePath = path.join(__dirname, '../temp/receptors', fileName) : filePath = path.join(app.getPath('userData'), 'temp/receptors', fileName);
             break;
         case 'ligand':
-            filePath = path.join(__dirname, '../temp/ligands', fileName);
+            isDev() ? filePath = path.join(__dirname, '../temp/ligands', fileName) : filePath = path.join(app.getPath('userData'), 'temp/ligands', fileName);
             break;
         case 'result':
-            filePath = path.join(__dirname, '../temp/results', fileName);
+            isDev() ? filePath = path.join(__dirname, '../temp/results', fileName) : filePath = path.join(app.getPath('userData'), 'temp/results', fileName);
             break;
         case 'temp':
-        filePath = path.join(__dirname, '../temp/temp', fileName);
+            isDev() ? filePath = path.join(__dirname, '../temp/temp', fileName) : filePath = path.join(app.getPath('userData'), 'temp/temp', fileName);
             break;
         case 'resultRec':
-            filePath = path.join(__dirname, '../temp/resultRec', fileName);
+            isDev() ? filePath = path.join(__dirname, '../temp/resultRec', fileName) : filePath = path.join(app.getPath('userData'), 'temp/resultRec', fileName);
             break;
         default:
             throw new Error(`Invalid type: ${type}`);
@@ -270,10 +285,18 @@ ipcMain.handle('find-file', async (event, { type, fileName }) => {
 ipcMain.handle('get-output-path', async (event, {type, filename}) => {
     switch (type) {
         case 'results':
-            return path.join(__dirname, '../temp/results', filename);
+            if (isDev()) {
+                return path.join(__dirname, '../temp/results', filename);
+            } else {
+                return path.join(app.getPath('userData'), 'temp/results', filename);
+            }
             break;
         case 'temp':
-            return path.join(__dirname, '../temp/temp', filename);
+            if (isDev()) {
+                return path.join(__dirname, '../temp/temp', filename);
+            } else {
+                return path.join(app.getPath('userData'), 'temp/temp', filename);
+            }
             break;
         default:
             throw new Error(`Invalid type: ${type}`);
@@ -288,8 +311,15 @@ function or(arg0: boolean) {
 ipcMain.handle('split-result', async (event, { result }) => {
 
     const resultName = path.basename(result);
-    const outputDir = path.join(__dirname, '../temp/temp/split');
-    const outputPath = path.join(__dirname, '../temp/temp/split', resultName);
+    let outputDir;
+    let outputPath;
+    if (isDev()) {
+        outputDir = path.join(__dirname, '../temp/temp/split');
+        outputPath = path.join(__dirname, '../temp/temp/split', resultName);
+    } else {
+        outputDir = path.join(app.getPath('userData'), 'temp/temp/split');
+        outputPath = path.join(app.getPath('userData'), 'temp/temp/split', resultName);
+    }
     const vina_split = getResourcePath('vina_split');
 
     // Limpa a pasta
@@ -304,14 +334,18 @@ ipcMain.handle('split-result', async (event, { result }) => {
 
 // Gerar config.txt
 ipcMain.handle('generate-config-file', async (event, { centerBox, sizeBox }) => {
-    const outputPath = path.join(__dirname, '../temp/temp/config.txt');
+
+    let outputPath;
+    if (isDev()) {
+        outputPath = path.join(__dirname, '../temp/temp/config.txt');
+    } else {
+        outputPath = path.join(app.getPath('userData'), 'temp/temp/config.txt');
+    }
 
     return new Promise((resolve, reject) => {
         const boxconfig = getResourcePath('boxConfig.py');
         const args = [boxconfig,...centerBox, ...sizeBox, outputPath];
         const process = spawn('python3', args);
-
-        console.log('generate-config-file:', args);
 
         process.stdout.on('data', (data) => {
             console.log(`stdout: ${data}`);
@@ -337,7 +371,12 @@ ipcMain.handle('generate-config-file', async (event, { centerBox, sizeBox }) => 
 
 // Copiar receptor
 ipcMain.handle('copy-receptor', async (event, { receptorPath, filename }) => {
-    const outputDir = path.join(__dirname, '../temp/resultRec');
+    let outputDir;
+    if (isDev()) {
+        outputDir = path.join(__dirname, '../temp/resultRec');
+    } else {
+        outputDir = path.join(app.getPath('userData'), 'temp/resultRec');
+    }
     const outputPath = path.join(outputDir, filename);
 
     fs.copyFileSync(receptorPath, outputPath);
@@ -347,17 +386,25 @@ ipcMain.handle('copy-receptor', async (event, { receptorPath, filename }) => {
 
 // Pegar conteudo do receptor do resultado
 ipcMain.handle('get-receptor', async (event, {resultname}) => {
-    console.log('Tipo de resultname:', typeof resultname, resultname);
     if (!resultname) {
         throw new Error('resultName is required');
     }
-    const resultPath = path.join(__dirname, '../temp/resultRec', resultname);
+    let resultPath;
+    if (isDev()) {
+        resultPath = path.join(__dirname, '../temp/resultRec', resultname);
+    } else {
+        resultPath = path.join(app.getPath('userData'), 'temp/resultRec', resultname);
+    }
     return fs.readFileSync(resultPath, 'utf8');
 });
 
 // Pegar o caminho da pasta temp
 ipcMain.handle('get-temps-folder-path', async (event, { folderName }) => {
-    return path.join(__dirname, '../temp', folderName);
+    if (isDev()) {
+        return path.join(__dirname, '../temp', folderName);
+    } else {
+        return path.join(app.getPath('userData'), 'temp', folderName);
+    }
 }
 );
 

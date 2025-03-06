@@ -1,22 +1,31 @@
 {
     "appId": "com.edugrutz.docking",
     "files": [
-        "dist-electron",
-        "dist-react",
-        "resources"
+      "dist-electron",
+      "dist-react",
+      "resources"
     ],
     "extraResources": [
-        "dist-electron/preload.cjs"
+      {
+        "from": "temp",
+        "to": "temp",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "resources",
+        "to": "resources"
+      },
+      "dist-electron/preload.cjs"
     ],
     "icon": "./icon.png",
     "mac": {
-        "target": "dmg"
+      "target": "dmg"
     },
     "linux": {
-        "target": "AppImage",
-        "category": "Utility"
+      "target": "AppImage",
+      "category": "Utility"
     },
     "win": {
-        "target": ["portable", "msi"]
+      "target": ["portable", "msi"]
     }
-}
+  }
