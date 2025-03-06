@@ -36,7 +36,7 @@ const Viewer = ({molViewer, molFormat, molName}) => {
           :
           <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {viewerRef.current.setBackgroundColor('black'); setDarkMode(true)}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle"></i></button>
         }
-        <div ref={viewerContainerRef} style={{ width: '100%', height: '425px', position: 'relative' }}></div>
+        <div ref={viewerContainerRef} style={{ width: '100%', height: '625px', position: 'relative' }}></div>
       <ViewerCustom viewer={viewerRef} refreshViewer={() => setRefresh(prev => prev + 1)}/>
       </div>
     </div>

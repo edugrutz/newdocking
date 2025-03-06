@@ -1,5 +1,6 @@
 import {useRef, useEffect, useState, use} from 'react'
 import * as $3Dmol from '3dmol'
+import ViewerCustom from './ViewerCustom';
 
 const ResultViewer = ({viewerData, selectedResult, activeTab}) => {
 
@@ -9,6 +10,8 @@ const ResultViewer = ({viewerData, selectedResult, activeTab}) => {
     const [resultNumber, setResultNumber] = useState(0);
     const [viewerMol, setViewerMol] = useState(null);
     const [energyValue, setEnergyValue] = useState(null);
+
+    const [refresh, setRefresh] = useState(0);
 
     useEffect(() => {
         if (selectedResult) {
@@ -30,7 +33,7 @@ const ResultViewer = ({viewerData, selectedResult, activeTab}) => {
     }, [resultNumber, viewerData, viewerMol]);
 
     async function showViewer() {
-        if (viewerContainerRef.current && viewerMol) {
+        if (viewerContainerRef.current && viewerMol && viewerData.length > 0) {
             if (!viewerRef.current) {
                 viewerRef.current = $3Dmol.createViewer(viewerContainerRef.current, { backgroundColor: 'black' });
             }
@@ -38,7 +41,7 @@ const ResultViewer = ({viewerData, selectedResult, activeTab}) => {
 
             const firstModel = viewerRef.current.addModel(viewerMol, 'pdb');
             viewerRef.current.setStyle({model: firstModel}, { cartoon: { color: 'spectrum' } });
-
+            
             const secondModel = viewerRef.current.addModel(viewerData[resultNumber].data, 'pdb');
             const energyLine = viewerData[resultNumber].data.split('\n').find(line => line.includes('REMARK VINA RESULT:'));
             if (energyLine) {
@@ -92,7 +95,8 @@ const ResultViewer = ({viewerData, selectedResult, activeTab}) => {
                 :
                 <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {viewerRef.current.setBackgroundColor('black'); setDarkMode(true)}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle"></i></button>
             }
-            <div ref={viewerContainerRef} style={{ width: '100%', height: '425px', position: 'relative' }}></div>
+            <div ref={viewerContainerRef} style={{ width: '100%', height: '625px', position: 'relative' }}></div>
+            <ViewerCustom viewer={viewerRef} refreshViewer={() => setRefresh(prev => prev + 1)}/>
         </div>
     </div>
   )

@@ -22,17 +22,20 @@ const Result = ({results, selectedResult, getFiles}) => {
   }
 
   async function changeToPdb(data) {
+    console.log('changeToPdb');
     let folder = await window.electron.getTempsFolderPath('temp/split')
         for (let i = 1; i < data.length; i++) {
             const atualPath = data[i].filePath;
             const fileNameWithoutExtension = data[i].name.replace(/\.pdbqt$/, '');
-            await window.electron.spawn('obabel', ['-ipdbqt', atualPath, '-opdb', '-O', `${folder}/${fileNameWithoutExtension}.pdb`]);
+            const change = await window.electron.spawn('obabel', ['-ipdbqt', atualPath, '-opdb', '-O', `${folder}/${fileNameWithoutExtension}.pdb`]);
+            console.log(change);
             // await window.electron.dellFile(atualPath);
         }
     setData();
   }
 
   async function setData() {
+    console.log('setData');
     const data = await window.electron.listSplit();
     const pdbFiles = data.filter(file => file.name.endsWith('.pdb')); // Filtra apenas .pdb
     setViewerData(pdbFiles); // Passa apenas os arquivos filtrados
@@ -56,7 +59,7 @@ const Result = ({results, selectedResult, getFiles}) => {
         <ul className="nav nav-tabs">
         <li className="nav-item">
           <button className={`nav-link text-light ${activeTab === 'viewer' ? 'active text-dark' : ''}`} onClick={() => setActiveTab('viewer')}>
-            Viewer
+            Result
           </button>
         </li>
         <li className="nav-item">

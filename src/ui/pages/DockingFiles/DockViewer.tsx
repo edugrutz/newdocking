@@ -43,7 +43,7 @@ const DockViewer = ({molViewer, molName, sizeBox, centerBox}) => {
           :
           <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {viewerRef.current.setBackgroundColor('black'); setDarkMode(true)}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle"></i></button>
         }
-        <div ref={viewerContainerRef} style={{ width: '450px', height: '300px', position: 'relative' }}></div>
+        <div ref={viewerContainerRef} style={{ width: '600px', height: '450px', position: 'relative' }}></div>
       </div>
     </div>
   );

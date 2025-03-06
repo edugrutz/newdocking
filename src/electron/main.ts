@@ -7,7 +7,7 @@ import { resourceLimits } from "worker_threads";
 import { spawn } from 'child_process';
 import { get } from "http";
 
-app.disableHardwareAcceleration();
+//app.disableHardwareAcceleration();
 
 // Diretório atual
 const __dirname = path.dirname(new URL(import.meta.url).pathname);

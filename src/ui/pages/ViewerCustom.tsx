@@ -22,14 +22,13 @@ const ViewerCustom = ({viewer, refreshViewer}) => {
         </div>  
         <div className='ms-auto'>
             <button className='btn btn-sm border border-secondary text-secondary mt-2' onClick={() => {
-                if (style) {
+                if (!style) {
                     viewer.current.setStyle({stick: {}}); 
-                    setStyle(false);
+                    setStyle(true);
                 }
                 else {
-                    viewer.current.setStyle({cartoon: {color:'white'}});
-                    setWhite(true);
-                    setStyle(true);
+                    viewer.current.setStyle({cartoon: {color:'spectrum'}});
+                    setStyle(false);
                 }
                 refreshViewer();
             }}>Stick</button>
