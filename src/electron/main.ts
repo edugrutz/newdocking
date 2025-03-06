@@ -112,9 +112,15 @@ ipcMain.handle('open-dialog', async (event, { method, format, config }) => {
 
 // Listar resultados splitados
 ipcMain.handle('listSplit', async (event) => {
-    const splitDir = path.join(__dirname, '../temp/temp/split');
+    let splitDir;
+    if (isDev()) {
+        splitDir = path.join(__dirname, '../temp/temp/split');
+    }
+    else {
+        splitDir = path.join(app.getPath('userData'), 'temp/temp/split');
+    }
+    
     let fileContents: { name: string, data: string }[] = [];
-
     try {
         const files = fs.readdirSync(splitDir);
         fileContents = files.map((file) => {
@@ -228,10 +234,11 @@ function getResourcePath(filename: string): string {
 ipcMain.handle('spawn', async (event, { command, args }) => {
     return new Promise((resolve, reject) => {
         // Se o comando for 'obabel', encontre o caminho correto
-        if (command === 'obabel' || command === 'prepare_receptor' || command === 'mk_prepare_ligand.py' || command === 'vina') {
+        if (command === 'obabel' || command === 'prepare_receptor' || command === 'mk_prepare_ligand' || command === 'vina') {
             command = getResourcePath(command);
         }
 
+        console.log('Spawn:', command, args);
         const process = spawn(command, args);
 
         let output = '';

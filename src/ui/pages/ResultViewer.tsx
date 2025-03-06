@@ -20,6 +20,7 @@ const ResultViewer: React.FC<ResultViewerProps> = ({viewerData, selectedResult, 
     const [refresh, setRefresh] = useState(0);
 
     useEffect(() => {
+        console.log('selectedResult');
         if (selectedResult) {
             getReceptorData();
         }
@@ -35,6 +36,7 @@ const ResultViewer: React.FC<ResultViewerProps> = ({viewerData, selectedResult, 
     }
 
     useEffect(() => {
+        console.log('viewerData');
         showViewer();
     }, [resultNumber, viewerData, viewerMol]);
 

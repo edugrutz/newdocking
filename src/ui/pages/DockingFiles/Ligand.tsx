@@ -28,7 +28,7 @@ const Ligand: React.FC<LigandProps> = ({ ligands, setPreparedLigand }) => {
       const outputPath = await window.electron.getOutputPath('temp','preparedLigand.sdf');
       const output = await window.electron.spawn('obabel', ['-isdf', selectedLigand, '-o', 'sdf', '-O', outputPath, '-h']);
       const outputPath2 = await window.electron.getOutputPath('temp','mkLigand.pdbqt');
-      const mk = await window.electron.spawn('mk_prepare_ligand.py', ['-i', outputPath, '-o', outputPath2]);
+      const mk = await window.electron.spawn('mk_prepare_ligand', ['-i', outputPath, '-o', outputPath2]);
       setPreparedLigand(selectedLigandName);
     } catch (error) {
       console.error(error);

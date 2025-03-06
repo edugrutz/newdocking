@@ -34,7 +34,6 @@ const Result: React.FC<ResultProps> = ({results, selectedResult, getFiles}) => {
             const atualPath = data[i].filePath;
             const fileNameWithoutExtension = data[i].name.replace(/\.pdbqt$/, '');
             const change = await window.electron.spawn('obabel', ['-ipdbqt', atualPath, '-opdb', '-O', `${folder}/${fileNameWithoutExtension}.pdb`]);
-            console.log(change);
             // await window.electron.dellFile(atualPath);
         }
     setData();
