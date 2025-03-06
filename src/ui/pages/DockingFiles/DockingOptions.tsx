@@ -2,7 +2,21 @@ import React, { useEffect } from 'react'
 import BoxConfig from './BoxConfig'
 import DockViewer from './DockViewer'
 
-const DockingOptions = ({molViewer, molName, preparedLigand, preparedReceptor, setResultName, Dock, setCenterBox, setSizeBox, centerBox, sizeBox, loading}) => {
+interface DockingOptionsProps {
+  molViewer: any;
+  molName: string;
+  preparedLigand: string;
+  preparedReceptor: string;
+  setResultName: (value: string) => void;
+  Dock: () => void;
+  setCenterBox: (value: number[]) => void;
+  setSizeBox: (value: number[]) => void;
+  centerBox: number[];
+  sizeBox: number[];
+  loading: boolean;
+}
+
+const DockingOptions: React.FC<DockingOptionsProps> = ({molViewer, molName, preparedLigand, preparedReceptor, setResultName, Dock, setCenterBox, setSizeBox, centerBox, sizeBox, loading}) => {
 
   // Atualiza os nomes das moleculas preparadas
   useEffect(() => {
@@ -15,7 +29,7 @@ const DockingOptions = ({molViewer, molName, preparedLigand, preparedReceptor, s
   }, [preparedLigand, preparedReceptor])
 
   // Atualiza o nome do resultado
-  const handleChange = (event) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setResultName(value);
   }

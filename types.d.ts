@@ -15,7 +15,6 @@ type EventPayloadMapping = {
     'get-receptor': { resultname: string };
     'get-temps-folder-path': { folderName: string };
     'download-result': { filepath: string };
-    
 };
 
 interface Window {

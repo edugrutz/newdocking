@@ -2,10 +2,16 @@ import {useRef, useEffect, useState, use} from 'react'
 import * as $3Dmol from '3dmol'
 import ViewerCustom from './ViewerCustom';
 
-const ResultViewer = ({viewerData, selectedResult, activeTab}) => {
+interface ResultViewerProps {
+    viewerData: any;
+    selectedResult: any;
+    activeTab: string;
+}
+
+const ResultViewer: React.FC<ResultViewerProps> = ({viewerData, selectedResult, activeTab}) => {
 
     const viewerContainerRef = useRef(null);
-    const viewerRef = useRef(null);
+    const viewerRef = useRef<$3Dmol.GLViewer | null>(null);
     const [darkMode, setDarkMode] = useState(true);
     const [resultNumber, setResultNumber] = useState(0);
     const [viewerMol, setViewerMol] = useState(null);
@@ -43,7 +49,7 @@ const ResultViewer = ({viewerData, selectedResult, activeTab}) => {
             viewerRef.current.setStyle({model: firstModel}, { cartoon: { color: 'spectrum' } });
             
             const secondModel = viewerRef.current.addModel(viewerData[resultNumber].data, 'pdb');
-            const energyLine = viewerData[resultNumber].data.split('\n').find(line => line.includes('REMARK VINA RESULT:'));
+            const energyLine = viewerData[resultNumber].data.split('\n').find((line: string | string[]) => line.includes('REMARK VINA RESULT:'));
             if (energyLine) {
                 const energy = energyLine.split(/\s+/)[3];
                 viewerRef.current.addLabel(energy, {position: {x: 0, y: 0, z: 0}, backgroundColor: 'black', backgroundOpacity: 0.7});
@@ -56,7 +62,7 @@ const ResultViewer = ({viewerData, selectedResult, activeTab}) => {
         }
     }
 
-    function changeResultNumber(number) {
+    function changeResultNumber(number: number) {
         setResultNumber(prev => {
             const newNumber = prev + number;
             if (newNumber < 0 || newNumber > (viewerData.length - 1)) {
@@ -91,9 +97,9 @@ const ResultViewer = ({viewerData, selectedResult, activeTab}) => {
         </div>
         <div style={{position: 'relative'}}>
             {darkMode ?
-                <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {viewerRef.current.setBackgroundColor('white'); setDarkMode(false)}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle-fill"></i></button>
+                <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {if (viewerRef.current) { viewerRef.current.setBackgroundColor('white', 1); } setDarkMode(false)}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle-fill"></i></button>
                 :
-                <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {viewerRef.current.setBackgroundColor('black'); setDarkMode(true)}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle"></i></button>
+                <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {if (viewerRef.current) { viewerRef.current.setBackgroundColor('black', 1); } setDarkMode(true)}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle"></i></button>
             }
             <div ref={viewerContainerRef} style={{ width: '100%', height: '625px', position: 'relative' }}></div>
             <ViewerCustom viewer={viewerRef} refreshViewer={() => setRefresh(prev => prev + 1)}/>

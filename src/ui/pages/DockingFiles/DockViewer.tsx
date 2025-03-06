@@ -1,9 +1,16 @@
 import { useRef, useEffect, useState } from 'react';
 import * as $3Dmol from '3dmol';
 
-const DockViewer = ({molViewer, molName, sizeBox, centerBox}) => {
+interface DockViewerProps {
+  molViewer: any;
+  molName: string;
+  sizeBox: number[];
+  centerBox: number[];
+}
+
+const DockViewer: React.FC<DockViewerProps> = ({molViewer, molName, sizeBox, centerBox}) => {
   const viewerContainerRef = useRef(null);
-  const viewerRef = useRef(null);
+  const viewerRef = useRef<$3Dmol.GLViewer | null>(null);
   const [darkMode, setDarkMode] = useState(true);
 
   const box = true;
@@ -39,9 +46,9 @@ const DockViewer = ({molViewer, molName, sizeBox, centerBox}) => {
       <h4>{molName}</h4>
       <div className='position-relative'>
         {darkMode ?
-          <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {viewerRef.current.setBackgroundColor('white'); setDarkMode(false)}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle-fill"></i></button>
+          <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {if (viewerRef.current) { viewerRef.current.setBackgroundColor('white', 1); setDarkMode(false); }}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle-fill"></i></button>
           :
-          <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {viewerRef.current.setBackgroundColor('black'); setDarkMode(true)}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle"></i></button>
+          <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {if (viewerRef.current) { viewerRef.current.setBackgroundColor('black', 1); setDarkMode(true); }}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle"></i></button>
         }
         <div ref={viewerContainerRef} style={{ width: '600px', height: '450px', position: 'relative' }}></div>
       </div>

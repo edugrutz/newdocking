@@ -5,16 +5,25 @@ import Viewer from './pages/Viewer';
 import Navbar from './pages/Navbar';
 import Docking from './pages/Docking';
 import List from './pages/List';
-import { get } from '3dmol';
 import Result from './pages/Result';
 
+interface AppProps {
+  receptorsData: string[];
+  ligandsData: string[];
+  results: string[];
+  molViewer: any;
+  molFormat: string;
+  molName: string;
+  selectedResult: any;
+}
+
 function App() {
-    const [receptorsData, setReceptorsData] = useState<any[]>([]);
-    const [ligandsData, setLigandsData] = useState<any[]>([]);
-    const [results, setResults] = useState<any[]>([]);
+    const [receptorsData, setReceptorsData] = useState<string[]>([]);
+    const [ligandsData, setLigandsData] = useState<string[]>([]);
+    const [results, setResults] = useState<string[]>([]);
 
     const [molViewer, setMolViewer] = useState(null);
-    const [molFormat, setMolFormat] = useState(null);
+    const [molFormat, setMolFormat] = useState<string>("");
     const [molName, setMolName] = useState("");
 
     const [selectedResult, setSelectedResult] = useState<any>();
@@ -42,7 +51,7 @@ function App() {
           filters: [{ name: '.pdb', extensions: ['pdb'] }]
       }).then((data) => {
         if (data) {
-          data.forEach(data => {
+          data.forEach((data: string) => {
             setReceptorsData(prevReceptorsData => [...prevReceptorsData, data]);
           });
           getFiles();
@@ -63,7 +72,7 @@ function App() {
           filters: [{ name: '.pdb', extensions: ['sdf', 'mol2', 'pdb'] }]
       }) .then((data) => {
         if (data) {
-          data.forEach(data => {
+          data.forEach((data: string) => {
             setLigandsData(prevLigandsData => [...prevLigandsData, data]);
           });
           getFiles();

@@ -1,13 +1,19 @@
 import React from 'react';
 
-const Receptor = ({ receptors, setSelectedReceptor, setPreparedReceptor }) => {
+interface ReceptorProps {
+    receptors: any;
+    setSelectedReceptor: any;
+    setPreparedReceptor: any;
+}
+
+const Receptor: React.FC<ReceptorProps> = ({ receptors, setSelectedReceptor, setPreparedReceptor }) => {
 
     const [selectedReceptorPath, setSelectedReceptorPath] = React.useState(null);
     const [selectedReceptorName, setSelectedReceptorName] = React.useState(null);
 
-    const handleSelectChange = (event) => {
+    const handleSelectChange = (event: any) => {
         const selectedReceptorName = event.target.value;
-        const selectedReceptor = receptors.find(receptor => receptor.name === selectedReceptorName);
+        const selectedReceptor = receptors.find((receptor: { name: any; }) => receptor.name === selectedReceptorName);
         if (selectedReceptor) {
             setSelectedReceptor(selectedReceptor.data);
             setSelectedReceptorPath(selectedReceptor.filePath);
@@ -37,7 +43,7 @@ const Receptor = ({ receptors, setSelectedReceptor, setPreparedReceptor }) => {
             <label htmlFor="receptor-select">Select Receptor</label>
             <select className="form-select w-50" id="receptor-select" onChange={handleSelectChange}>
                 <option value="">Select a receptor</option>
-                {receptors.map((receptor, index) => (
+                {receptors.map((receptor: any, index: any) => (
                     <option key={index} value={receptor.name}>
                         {receptor.name}
                     </option>

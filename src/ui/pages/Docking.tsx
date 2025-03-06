@@ -3,7 +3,13 @@ import Receptor from './DockingFiles/Receptor'
 import Ligand from './DockingFiles/Ligand'
 import DockingOptions from './DockingFiles/DockingOptions'
 
-const Docking = ({receptors, ligands, getFiles}) => {
+interface DockingProps {
+  receptors: any;
+  ligands: any;
+  getFiles: () => void;
+}
+
+const Docking: React.FC<DockingProps> = ({receptors, ligands, getFiles}) => {
 
   const [molName, setMolName] = useState('')
   const [selectedReceptor, setSelectedReceptor] = useState('')

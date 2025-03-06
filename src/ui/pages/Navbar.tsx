@@ -1,10 +1,13 @@
 import { Link } from "react-router-dom";
 import Logo from '../assets/logo.png'
 
-function Navbar({handleReceptorUpload, handleLigandUpload}) {
+interface NavbarProps {
+    handleReceptorUpload: () => void;
+    handleLigandUpload: () => void;
+}
 
+const Navbar: React.FC<NavbarProps> = ({handleReceptorUpload, handleLigandUpload}) => {
 
-    
     return (
     <div className='p-2 d-flex align-items-center bg-dark'>
         <Link to="/" style={{width:'20%', minWidth:'100px', maxWidth:'200px'}} className="ms-2 me-2">

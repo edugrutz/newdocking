@@ -1,8 +1,12 @@
 import { SurfaceType } from '3dmol';
-import { MeshDoubleLambertMaterial } from '3dmol/build/types/WebGL';
 import React from 'react'
 
-const ViewerCustom = ({viewer, refreshViewer}) => {
+interface ViewerCustomProps {
+    viewer: any;
+    refreshViewer: () => void;
+}
+
+const ViewerCustom: React.FC<ViewerCustomProps> = ({viewer, refreshViewer}) => {
 
     const [surface, setSurface] = React.useState(false);
     const [style, setStyle] = React.useState(false);

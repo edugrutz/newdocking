@@ -3,7 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import ResultViewer from './ResultViewer';
 import ResultSummary from './ResultSummary';
 
-const Result = ({results, selectedResult, getFiles}) => {
+interface ResultProps {
+  results: any;
+  selectedResult: any;
+  getFiles: () => void;
+}
+
+const Result: React.FC<ResultProps> = ({results, selectedResult, getFiles}) => {
 
   const [viewerData, setViewerData] = React.useState([]);
   const [activeTab, setActiveTab] = React.useState('viewer');
@@ -15,13 +21,13 @@ const Result = ({results, selectedResult, getFiles}) => {
   }, [selectedResult]);
 
   async function SplitResult() {
-    const selectedResultPath = results.find(result => result.name === selectedResult).filePath;
+    const selectedResultPath = results.find((result: { name: any; }) => result.name === selectedResult).filePath;
     await window.electron.splitResult(selectedResultPath);
     const data = await window.electron.listSplit();
     await changeToPdb(data);
   }
 
-  async function changeToPdb(data) {
+  async function changeToPdb(data: string | any[]) {
     console.log('changeToPdb');
     let folder = await window.electron.getTempsFolderPath('temp/split')
         for (let i = 1; i < data.length; i++) {
@@ -37,7 +43,7 @@ const Result = ({results, selectedResult, getFiles}) => {
   async function setData() {
     console.log('setData');
     const data = await window.electron.listSplit();
-    const pdbFiles = data.filter(file => file.name.endsWith('.pdb')); // Filtra apenas .pdb
+    const pdbFiles = data.filter((file: { name: string; }) => file.name.endsWith('.pdb')); // Filtra apenas .pdb
     setViewerData(pdbFiles); // Passa apenas os arquivos filtrados
   }
 

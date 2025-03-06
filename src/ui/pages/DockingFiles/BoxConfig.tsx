@@ -1,8 +1,15 @@
 import React from 'react'
 
-const BoxConfig = ({setCenterBox, setSizeBox, centerBox, sizeBox}) => {
+interface BoxConfigProps {
+  setCenterBox: any;
+  setSizeBox: any;
+  centerBox: any;
+  sizeBox: any;
+}
 
-  const setCenter = (index, value) => {
+const BoxConfig: React.FC<BoxConfigProps> = ({setCenterBox, setSizeBox, centerBox, sizeBox}) => {
+
+  const setCenter = (index: number, value: string) => {
     const newValue = parseInt(value, 10);
 
     // Verifica se newValue é um número válido
@@ -15,12 +22,12 @@ const BoxConfig = ({setCenterBox, setSizeBox, centerBox, sizeBox}) => {
     }
   };
 
-  const setSize = (index, value) => {
+  const setSize = (index: number, value: string) => {
     const newValue = parseInt(value, 10);
 
     // Verifica se newValue é um número válido
     if (!isNaN(newValue)) {
-      const newCoordinates = [...sizeBox];
+      const newCoordinates: number[] = [...sizeBox];
       newCoordinates[index] = newValue;
       setSizeBox(newCoordinates);
     } else {

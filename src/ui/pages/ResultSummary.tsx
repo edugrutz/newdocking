@@ -1,6 +1,14 @@
 import React from 'react'
 
-const ResultSummary = ({viewerData}) => {
+interface ReceptorData {
+  data: string;
+}
+
+interface ResultSummaryProps {
+  viewerData: ReceptorData[];
+}
+
+const ResultSummary: React.FC<ResultSummaryProps> = ({viewerData}) => {
 
   return (
     <div className="tab-pane fade show active">
@@ -12,16 +20,16 @@ const ResultSummary = ({viewerData}) => {
           </tr>
         </thead>
         <tbody>
-          {viewerData.map((receptor, index) => {
-            const energyLine = receptor.data.split('\n').find(line => line.startsWith('REMARK VINA RESULT'));
-            const energy = energyLine ? energyLine.split(/\s+/)[3] : 'N/A';
+            {viewerData.map((receptor: ReceptorData, index: number) => {
+            const energyLine: string | undefined = receptor.data.split('\n').find((line: string) => line.startsWith('REMARK VINA RESULT'));
+            const energy: string = energyLine ? energyLine.split(/\s+/)[3] : 'N/A';
             return (
               <tr key={index}>
-                <th scope="row">{index + 1}</th>
-                <td>{energy}</td>
+              <th scope="row">{index + 1}</th>
+              <td>{energy}</td>
               </tr>
             );
-          })}
+            })}
         </tbody>
       </table>
     </div>

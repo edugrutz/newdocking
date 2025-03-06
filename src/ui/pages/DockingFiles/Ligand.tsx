@@ -1,12 +1,17 @@
 import { useEffect, useState } from 'react';
 
-const Ligand = ({ ligands, setPreparedLigand }) => {
+interface LigandProps {
+  ligands: any;
+  setPreparedLigand: any;
+}
+
+const Ligand: React.FC<LigandProps> = ({ ligands, setPreparedLigand }) => {
   const [selectedLigand, setSelectedLigand] = useState('');
   const [selectedLigandName, setSelectedLigandName] = useState('');
 
-  const handleSelectChange = (event) => {
+  const handleSelectChange = (event: { target: { value: any; }; }) => {
     const selectedLigandName = event.target.value;
-    const selectedLigand = ligands.find(ligand => ligand.name === selectedLigandName);
+    const selectedLigand = ligands.find((ligand: { name: any; }) => ligand.name === selectedLigandName);
     if (selectedLigand) {
       setSelectedLigand(selectedLigand.filePath);
     }
@@ -35,7 +40,7 @@ const Ligand = ({ ligands, setPreparedLigand }) => {
       <label htmlFor="ligand-select">Select Ligand</label>
       <select className="form-select w-50" id="ligand-select" onChange={handleSelectChange}>
         <option value="">Select a ligand</option>
-        {ligands.map((ligand, index) => (
+        {ligands.map((ligand: { name: string }, index: number) => (
           <option key={index} value={ligand.name}>{ligand.name}</option>
         ))}
       </select>
