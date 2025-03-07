@@ -7,7 +7,7 @@ import { resourceLimits } from "worker_threads";
 import { spawn } from 'child_process';
 import { get } from "http";
 
-//app.disableHardwareAcceleration();
+app.disableHardwareAcceleration();
 
 function createAppDirectories() {
     const baseDir = process.env.NODE_ENV === 'development' 

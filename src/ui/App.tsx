@@ -7,7 +7,7 @@ import Docking from './pages/Docking';
 import List from './pages/List';
 import Result from './pages/Result';
 
-interface AppProps {
+export interface AppProps {
   receptorsData: string[];
   ligandsData: string[];
   results: string[];
