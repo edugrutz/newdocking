@@ -18,6 +18,7 @@ temp/ligands/*
 temp/receptors/*
 temp/results/*
 temp/temp/split/*
+venv
 
 # Editor directories and files
 .vscode/*
