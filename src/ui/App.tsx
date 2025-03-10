@@ -6,8 +6,9 @@ import Navbar from './pages/Navbar';
 import Docking from './pages/Docking';
 import List from './pages/List';
 import Result from './pages/Result';
+import Home from './pages/Home';
 
-interface AppProps {
+export interface AppProps {
   receptorsData: string[];
   ligandsData: string[];
   results: string[];
@@ -15,6 +16,7 @@ interface AppProps {
   molFormat: string;
   molName: string;
   selectedResult: any;
+  format: string;
 }
 
 function App() {
@@ -25,6 +27,7 @@ function App() {
     const [molViewer, setMolViewer] = useState(null);
     const [molFormat, setMolFormat] = useState<string>("");
     const [molName, setMolName] = useState("");
+    const [format, setFormat] = useState<string>("");
 
     const [selectedResult, setSelectedResult] = useState<any>();
 
@@ -89,11 +92,12 @@ function App() {
                 <Navbar handleLigandUpload={handleLigandUpload} handleReceptorUpload={handleReceptorUpload}/>
                 <div className='d-flex flex-grow-1'>
                     <aside className='sidebar'>
-                        <List receptors={receptorsData} ligands={ligandsData} results={results} setMolViewer={setMolViewer} setMolFormat={setMolFormat} getFiles={getFiles} setMolName={setMolName} setSelectedResult={setSelectedResult}/>
+                        <List receptors={receptorsData} ligands={ligandsData} results={results} setMolViewer={setMolViewer} setMolFormat={setMolFormat} getFiles={getFiles} setMolName={setMolName} setSelectedResult={setSelectedResult} setFormat={setFormat}/>
                     </aside>
                     <main className='content ms-2 w-100 me-3'>
                         <Routes>
-                            <Route path="/" element={<Viewer molViewer={molViewer} molFormat={molFormat} molName={molName}/>} />
+                            <Route path="/" element={<Home />} />
+                            <Route path="/viewer" element={<Viewer molViewer={molViewer} molFormat={molFormat} molName={molName} format={format}/>} />
                             <Route path="/docking" element={<Docking receptors={receptorsData} ligands={ligandsData} getFiles={getFiles}/>} />
                             <Route path="/result" element={<Result results={results} selectedResult={selectedResult} getFiles={getFiles}/>} />
                         </Routes>

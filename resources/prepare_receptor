@@ -6,7 +6,7 @@
 
 ######
 ## Set some environment variables.
-ADS_ROOT="/home/eduardo/ADFRsuite-1.0" 
+ADS_ROOT="/home/eduardo/newdocking/dist-electron/adfrsuite" 
 export ADS_ROOT
 
 ########

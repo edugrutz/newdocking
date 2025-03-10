@@ -10,9 +10,10 @@ interface ListProps {
     getFiles: any;
     setMolName: any;
     setSelectedResult: any;
+    setFormat: any;
 }
 
-const List: React.FC<ListProps> = ({ receptors, ligands, results, setMolViewer, setMolFormat, getFiles, setMolName, setSelectedResult}) => {
+const List: React.FC<ListProps> = ({ receptors, ligands, results, setMolViewer, setMolFormat, getFiles, setMolName, setSelectedResult, setFormat}) => {
 
     const navigate = useNavigate();
 
@@ -21,14 +22,14 @@ const List: React.FC<ListProps> = ({ receptors, ligands, results, setMolViewer, 
             <label>Receptors</label>
             {receptors.map((receptor: any, index: number) => (
                 <div className='border border-light p-1 d-flex align-items-center mt-1' key={index}>
-                    <label onClick={() => {setMolViewer(receptor.data); setMolFormat(receptor.format); setMolName(receptor.name); navigate('/')}} className='p-1 text-truncate'  style={{cursor:'pointer'}}>{receptor.name}</label>
+                    <label onClick={() => {setFormat('receptor'); setMolViewer(receptor.data); setMolFormat(receptor.format); setMolName(receptor.name); navigate('/viewer')}} className='p-1 text-truncate'  style={{cursor:'pointer'}}>{receptor.name}</label>
                     <button onClick={() => {window.electron.dellFile(receptor.filePath); getFiles()}} className='btn btn-sm text-danger ms-auto' style={{height:'50%'}}><i className="bi bi-trash"></i></button>
                 </div>
             ))} <br />
             <label>Ligands</label>
             {ligands.map((ligand : any, index: any) => (
                 <div className='border border-light p-1 d-flex align-items-center mt-1' key={index}>
-                    <label onClick={() => {setMolViewer(ligand.data); setMolFormat(ligand.format); setMolName(ligand.name); navigate('/')}} className='p-1 text-truncate' style={{cursor:'pointer'}}>{ligand.name}</label>
+                    <label onClick={() => {setFormat('ligand'); setMolViewer(ligand.data); setMolFormat(ligand.format); setMolName(ligand.name); navigate('/viewer')}} className='p-1 text-truncate' style={{cursor:'pointer'}}>{ligand.name}</label>
                     <button onClick={() => {window.electron.dellFile(ligand.filePath); getFiles()}} className='btn btn-sm text-danger ms-auto' style={{height:'50%'}}><i className="bi bi-trash"></i></button>
                 </div>
             ))} <br />

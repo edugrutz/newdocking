@@ -5,7 +5,6 @@ const electron = require('electron');
 electron.contextBridge.exposeInMainWorld('electron', {
     getStaticData: () => { console.log('static'); },
     openDialog: (method: string, format: string, config: any) => ipcInvoke('open-dialog', { method, format, config } as { method: string; format: string; config: any }),
-    listFiles: () => ipcInvoke('listFiles', {}),
     getFiles: () => ipcInvoke('getFiles', {}),
     dellFile: (filePath: string) => ipcInvoke('dellFile', { filePath }),
     spawn: (command: string, args: string[]) => ipcInvoke('spawn', { command, args }),

@@ -3,9 +3,66 @@ import path from "path";
 import fs from "fs";
 import { isDev } from "./util.js";
 import { getPreloadPath } from "./pathResolver.js";
-import { resourceLimits } from "worker_threads";
-import { spawn } from 'child_process';
+import { spawn, execSync } from 'child_process';
 import { get } from "http";
+
+function checkAndInstallADFR() {
+    const prepareReceptorPath = getWritableResourcePath('prepare_receptor');
+    const ADFR_TAR_FILE = 'ADFRsuite_x86_64Linux_1.0.tar.gz';
+    const ADFR_FOLDER = 'ADFRsuite_x86_64Linux_1.0';
+
+    let INSTALL_FOLDER;
+    if (isDev()) {
+        INSTALL_FOLDER = path.join(__dirname, 'adfrsuite');
+    } else {
+        INSTALL_FOLDER = path.join(app.getPath('userData'), 'adfrsuite');
+    }
+
+    if (!fs.existsSync(prepareReceptorPath)) {
+        console.log('prepare_receptor não encontrado, instalando ADFRsuite...');
+        const tarFilePath = getResourcePath(ADFR_TAR_FILE);
+        const tempExtractPath = path.join(app.getPath('temp'), 'adfrsuite_temp');
+
+        // Cria o diretório temporário se não existir
+        if (!fs.existsSync(tempExtractPath)) {
+            fs.mkdirSync(tempExtractPath, { recursive: true });
+        }
+
+        const extractCommand = `tar zxvf ${tarFilePath} -C ${tempExtractPath}`;
+        const installCommand = `echo Y | ./install.sh -d ${INSTALL_FOLDER} -c 0`;
+
+        try {
+            execSync(extractCommand);
+            execSync(installCommand, { cwd: path.join(tempExtractPath, ADFR_FOLDER) });
+
+            const sourcePath = path.join(INSTALL_FOLDER, 'bin', 'prepare_receptor');
+            if (fs.existsSync(sourcePath)) {
+                fs.copyFileSync(sourcePath, prepareReceptorPath);
+                console.log('ADFRsuite instalado com sucesso.', prepareReceptorPath);
+            } else {
+                console.error('Erro: prepare_receptor não encontrado após a instalação.');
+            }
+        } catch (error) {
+            console.error('Erro ao instalar ADFRsuite:', error);
+        } finally {
+            // Remove o diretório temporário
+            fs.rmSync(tempExtractPath, { recursive: true, force: true });
+        }
+    } else {
+        console.log('prepare_receptor já está presente.', prepareReceptorPath);
+    }
+}
+
+function getWritableResourcePath(filename: string): string {
+    return isDev()
+        ? path.join(__dirname, '../resources', filename)
+        : path.join(app.getPath('userData'), 'temp', filename);
+}
+
+app.whenReady().then(() => {
+    checkAndInstallADFR();
+    createAppDirectories();
+});
 
 //app.disableHardwareAcceleration();
 
@@ -40,8 +97,9 @@ app.on("ready", () => {
     const mainWindow = new BrowserWindow({
         webPreferences: {
             preload: getPreloadPath(),
-            devTools: true,
+            devTools: true,                
         },
+        autoHideMenuBar: true,
     });
 
     mainWindow.maximize();
@@ -225,17 +283,28 @@ ipcMain.handle('dellFile', async (event, { filePath }) => {
 
 // Acha o arquivo na resources
 function getResourcePath(filename: string): string {
-    return app.isPackaged
-        ? path.join(process.resourcesPath, 'resources', filename) // Caminho no build
-        : path.join(__dirname, '../resources', filename); // Caminho no dev
+    if (isDev()) {
+        console.log('Dev:', path.join(__dirname, '../resources', filename));
+        return path.join(__dirname, '../resources', filename);
+    } else {
+        console.log('Prod:', path.join(process.resourcesPath, 'resources', filename));
+        return path.join(process.resourcesPath, 'resources', filename);
+    }
 }
 
 // Spawn process
 ipcMain.handle('spawn', async (event, { command, args }) => {
     return new Promise((resolve, reject) => {
         // Se o comando for 'obabel', encontre o caminho correto
-        if (command === 'obabel' || command === 'prepare_receptor' || command === 'mk_prepare_ligand' || command === 'vina') {
+        if (command === 'obabel' || command === 'mk_prepare_ligand' || command === 'vina') {
             command = getResourcePath(command);
+        }
+        if (command === 'prepare_receptor') {
+            if (isDev()) {
+                command = path.join(__dirname, '../resources', 'prepare_receptor');
+            } else {
+                command = path.join(app.getPath('userData'), 'temp', 'prepare_receptor');
+            }
         }
 
         console.log('Spawn:', command, args);
