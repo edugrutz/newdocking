@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import './App.css';
 import { BrowserRouter as Router, Route, Routes, data } from 'react-router-dom';
 import Viewer from './pages/Viewer';
 import Navbar from './pages/Navbar';
