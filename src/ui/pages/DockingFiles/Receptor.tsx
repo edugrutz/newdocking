@@ -1,4 +1,5 @@
 import React from 'react';
+import { useError } from '../../context/ErrorContext';
 
 interface ReceptorProps {
     receptors: any;
@@ -10,6 +11,8 @@ const Receptor: React.FC<ReceptorProps> = ({ receptors, setSelectedReceptor, set
 
     const [selectedReceptorPath, setSelectedReceptorPath] = React.useState(null);
     const [selectedReceptorName, setSelectedReceptorName] = React.useState(null);
+
+    const { showError } = useError();
 
     const handleSelectChange = (event: any) => {
         const selectedReceptorName = event.target.value;
@@ -26,6 +29,7 @@ const Receptor: React.FC<ReceptorProps> = ({ receptors, setSelectedReceptor, set
     // Preparação do receptor
     const prepareReceptor = async () => {
         if (!selectedReceptorPath) {
+            showError('No receptor selected');
             console.log('No receptor selected');
             return;
         }

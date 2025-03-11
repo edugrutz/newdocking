@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useError } from '../../context/ErrorContext';
 
 interface LigandProps {
   ligands: any;
@@ -8,6 +9,8 @@ interface LigandProps {
 const Ligand: React.FC<LigandProps> = ({ ligands, setPreparedLigand }) => {
   const [selectedLigand, setSelectedLigand] = useState('');
   const [selectedLigandName, setSelectedLigandName] = useState('');
+
+  const { showError } = useError();
 
   const handleSelectChange = (event: { target: { value: any; }; }) => {
     const selectedLigandName = event.target.value;
@@ -21,6 +24,7 @@ const Ligand: React.FC<LigandProps> = ({ ligands, setPreparedLigand }) => {
   // Preparar ligante
   const PrepareLigand = async () => {
     if (!selectedLigand) {
+      showError('No ligand selected');
       console.log('No ligand selected');
       return;
     }

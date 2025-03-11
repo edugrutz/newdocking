@@ -6,6 +6,7 @@ import Docking from './pages/Docking';
 import List from './pages/List';
 import Result from './pages/Result';
 import Home from './pages/Home';
+import { ErrorProvider } from './context/ErrorContext';
 
 export interface AppProps {
   receptorsData: string[];
@@ -34,7 +35,7 @@ function App() {
       getFiles();
   }, []);
 
-   // Listar arquivos e pegar data
+   // List filles and get data
    async function getFiles() {
     const data = await window.electron.getFiles() .then ((data) => {
       setResults(data.resultsData);
@@ -43,7 +44,7 @@ function App() {
     });
   }
 
-    // Fazer upload dos receptores
+    // Receptors Upload
     async function handleReceptorUpload() {
       try {
       const rUpload = await window.electron.openDialog('upload', 'receptor', {
@@ -64,7 +65,7 @@ function App() {
       }
     }
 
-    // Fazer upload dos ligantes
+    // Ligands Upload
     async function handleLigandUpload() {
       try {
       const lUpload = await window.electron.openDialog('upload', 'ligand', {
@@ -87,6 +88,7 @@ function App() {
 
     return (
         <div className='bg-dark text-light vh-100 d-flex flex-column'>
+          <ErrorProvider>
             <Router>
                 <Navbar handleLigandUpload={handleLigandUpload} handleReceptorUpload={handleReceptorUpload}/>
                 <div className='d-flex flex-grow-1'>
@@ -103,6 +105,7 @@ function App() {
                     </main>
                 </div>
             </Router>
+          </ErrorProvider>
         </div>
     );
 }
