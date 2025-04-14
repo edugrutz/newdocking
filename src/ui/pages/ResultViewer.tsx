@@ -104,7 +104,7 @@ const ResultViewer: React.FC<ResultViewerProps> = ({viewerData, selectedResult, 
                 <button className='btn btn-sm border border-secondary text-secondary mb-2' onClick={() => {if (viewerRef.current) { viewerRef.current.setBackgroundColor('black', 1); } setDarkMode(true)}} style={{position:'absolute', top:'10px', left:'10px', zIndex: 1}}><i className="bi bi-circle"></i></button>
             }
             <div ref={viewerContainerRef} style={{ width: '100%', height: '625px', position: 'relative' }}></div>
-            <ViewerCustom viewer={viewerRef} refreshViewer={() => setRefresh(prev => prev + 1)}/>
+            <ViewerCustom viewer={viewerRef} refreshViewer={() => setRefresh(prev => prev + 1)} format={null}/>
         </div>
     </div>
   )
