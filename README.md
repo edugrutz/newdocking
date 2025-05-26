@@ -40,10 +40,15 @@ npm run dev
 ## 🧰 Technologies Used
 
 ⚛️ React – UI rendering
+
 ⚡ Vite – Fast build tool and dev server
+
 🖥️ Electron – Cross-platform desktop application
+
 🔬 3Dmol.js – Molecular visualization
+
 🧪 Open Babel – Molecular conversion and analysis
+
 💾 Node.js – Backend integrations
 
 ## 📚 Documentation
@@ -54,11 +59,11 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 
 Steps:
 
-- Fork the repo
-- Create your feature branch: git checkout -b feature/my-feature
-- Commit your changes: git commit -m 'Add my feature'
-- Push to the branch: git push origin feature/my-feature
-- Open a Pull Request
+1. Fork the repo
+2. Create your feature branch: git checkout -b feature/my-feature
+3. Commit your changes: git commit -m 'Add my feature'
+4. Push to the branch: git push origin feature/my-feature
+5. Open a Pull Request
 
 ## 📄 License
 This project is licensed under the MIT License – see the LICENSE file for details.
